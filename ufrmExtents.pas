@@ -16,6 +16,8 @@ type
   PULONGLONG = ^ULONGLONG;
   TClusters = array of LONGLONG;
 
+
+
   VOLUME_LOGICAL_OFFSET =record
    LogicalOffset:LONGLONG;
 end;
@@ -38,15 +40,21 @@ PVOLUME_PHYSICAL_OFFSETS=VOLUME_PHYSICAL_OFFSETS;
   end;
   PSTARTING_VCN_INPUT_BUFFER = ^STARTING_VCN_INPUT_BUFFER;
 
-  Extents = record
+  Extent = record
     NextVcn: LARGE_INTEGER;
     Lcn: LARGE_INTEGER;
   end;
 
+  TExtent_ = record
+    NextVcn: LARGE_INTEGER;
+    sectors:ULONG;
+  end;
+  TExtents_=array of TExtent_;
+
   RETRIEVAL_POINTERS_BUFFER = record
     ExtentCount: DWORD;
     StartingVcn: LARGE_INTEGER;
-    Extents: array[0..0] of Extents;
+    Extents: array[0..0] of Extent;
   end;
   PRETRIEVAL_POINTERS_BUFFER = ^RETRIEVAL_POINTERS_BUFFER;
 
@@ -65,6 +73,7 @@ type
     procedure JvOpenDialog1ShareViolation(Sender: TObject;
       var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
+    procedure MemoDblClick(Sender: TObject);
   private
     { Private declarations }
     procedure get_details(filename:string);
@@ -90,11 +99,11 @@ if console=true
  else frmExtents.Memo.Lines.Add(msg);
 end;
 
-function GetFileClusters(lpFileName: PChar; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64): TClusters;
+function GetFileClusters(lpFileName: PChar; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 var
   hFile: THandle;
   OutSize: ULONG;
-  Bytes, Cls, CnCount, r: ULONG;
+  Bytes, Cls, CnCount, r,sectors: ULONG;
   Clusters: TClusters;
   PrevVCN, lcn: LARGE_INTEGER;
   InBuf: STARTING_VCN_INPUT_BUFFER;
@@ -139,26 +148,35 @@ begin
       ClCount^ := (FileSize + ClusterSize - 1) div ClusterSize;
 
       SetLength(Clusters, ClCount^);
+      SetLength(Extents_, OutBuf^.ExtentCount);
       PrevVCN := OutBuf^.StartingVcn;
-      dolog('ExtentCount:'+inttostr(OutBuf^.ExtentCount));
-      dolog('StartingVcn:'+inttohex(OutBuf^.StartingVcn.QuadPart ,8));
+      //dolog('ExtentCount:'+inttostr(OutBuf^.ExtentCount));
+      //dolog('StartingVcn:'+inttohex(OutBuf^.StartingVcn.QuadPart ,8));
       Cls := 0;
       r := 0;
+      extents_ [0].NextVcn.quadpart :=0;
       while (r < OutBuf^.ExtentCount) do
       begin
         Lcn := OutBuf^.Extents[r].Lcn;
         CnCount := ULONG(OutBuf^.Extents[r].NextVcn.QuadPart - PrevVCN.QuadPart);
-        //dolog('Lcn:'+inttohex(OutBuf^.Extents[r].Lcn.QuadPart ,8));
-        if r<OutBuf^.ExtentCount -1
-          then dolog('NextVcn:'+inttohex(OutBuf^.Extents[r].NextVcn.lowpart  ,4)+inttohex(OutBuf^.Extents[r].NextVcn.highpart  ,4));
+
+        sectors:=0;
         while (CnCount > 0) do
         begin
           Clusters[Cls] := Lcn.QuadPart;
           Dec(CnCount);
-          Inc(Cls);
+          Inc(Cls);inc(sectors);
           Inc(Lcn.QuadPart);
         end;
-        dolog('Sectors:'+inttohex(cls*4096 div 512 ,8));
+
+        extents_ [r].sectors :=sectors*ClusterSize div 512;
+
+        if r<OutBuf^.ExtentCount -1 then
+        begin
+        //dolog('NextVcn:'+inttohex(OutBuf^.Extents[r].NextVcn.lowpart  ,4)+inttohex(OutBuf^.Extents[r].NextVcn.highpart  ,4));
+        extents_ [r+1].NextVcn :=OutBuf^.Extents[r].NextVcn;
+        end;
+
         PrevVCN := OutBuf^.Extents[r].NextVcn;
 
         Inc(r);
@@ -216,8 +234,9 @@ procedure TfrmExtents.get_details(filename:string);
 var
 lpSrcName:pchar;
 Clusters: TClusters;
+Extents_: TExtents_;
 FileSize, ClusterSize:int64;
-ClCount,i: ULONG;
+ClCount,i,sector: ULONG;
 Name: array[0..6] of Char;
 SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
 lba:int64;
@@ -236,7 +255,7 @@ Name[0] := lpSrcName[0];
   ClusterSize := SecPerCl * BtPerSec;
 //
 try
-Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize);
+Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
 except
 on e:exception do dolog(e.Message );
 end;
@@ -258,8 +277,7 @@ begin
 lba:=0;
 dolog('Filesystem :'+strpas(FSName));
 //Send the first extent's LCN to translation to physical offset from the beginning of the disk
-if FSName='NTFS' then
-  lba:=TranslateLogicalToPhysical(lpSrcName,clusters[0] * (SecPerCl * BtPerSec));
+//if FSName='NTFS' then lba:=TranslateLogicalToPhysical(lpSrcName,clusters[0] * (SecPerCl * BtPerSec));
 end;
 //
   dolog('***************************');
@@ -268,17 +286,22 @@ end;
   dolog('File size in bytes :'+inttostr(FileSize));
   dolog('File cluster first :'+inttostr(clusters[low(clusters)]));
   dolog('File cluster last  :'+inttostr(clusters[high(clusters)]));
-  dolog('File cluster last-first  :'+inttostr(1+clusters[high(clusters)]-clusters[low(clusters)]));
-  dolog('Sectors  :'+inttohex(SecPerCl*clcount,8));
-  {
-  LONGLONG lengthInClusters = 
-            translation->rpBuf.Extents[0].NextVcn.QuadPart - translation->rpBuf.StartingVcn.QuadPart;
-  nSectors = (lengthInClusters * translation->volumeData.BytesPerCluster) /
-            translation->volumeData.BytesPerSector;
-  }
-  if lba>0 then dolog('File offset 0 LBA:'+inttohex(lba div BtPerSec,8));
+  //if length(extents_)=1 then dolog('Sectors  :'+inttohex(SecPerCl*clcount,8));
   dolog('');
-  //if console=false then
+  //*************
+  if 1=1 then
+  begin
+  sector:=0;lba:=0;
+  for i:=low(extents_) to high(extents_)  do
+  begin
+  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(lpSrcName,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
+  dolog('extents_['+inttostr(i)+'] : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
+    +' Sectors : 0x'+inttohex(extents_[i].sectors ,8)
+    +' Lba : 0x'+inttohex(lba div BtPerSec,8));
+  end;
+  end;
+  //**********
   if 1=2 then
   begin
   for i:=1 to clcount  do
@@ -309,6 +332,7 @@ procedure TfrmExtents.backup(source,destination:string);
 var
 lpDstName,lpSrcName:pchar;
 Clusters: TClusters;
+Extents_: TExtents_;
 FileSize, ClusterSize,FullSize,BlockSize, CopyedSize:int64;
  r,ClCount,i: ULONG;
 Name: array[0..6] of Char;
@@ -332,7 +356,7 @@ Name[0] := lpSrcName[0];
   GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
-Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize);
+Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
 //
 FullSize := FileSize;
 
@@ -469,6 +493,11 @@ if console=true then
 
 end;//if paramcount>0 then
 
+end;
+
+procedure TfrmExtents.MemoDblClick(Sender: TObject);
+begin
+memo.Clear ;
 end;
 
 end.

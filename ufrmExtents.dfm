@@ -2,7 +2,7 @@ object frmExtents: TfrmExtents
   Left = 307
   Top = 201
   Width = 465
-  Height = 375
+  Height = 454
   Caption = 'Dump Extents by Erwan2212@gmail.com'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,24 +16,25 @@ object frmExtents: TfrmExtents
   TextHeight = 13
   object Label1: TLabel
     Left = 24
-    Top = 256
+    Top = 336
     Width = 42
     Height = 13
     Caption = 'Filename'
   end
   object Memo: TMemo
     Left = 24
-    Top = 32
+    Top = 8
     Width = 409
-    Height = 217
+    Height = 321
     Lines.Strings = (
       '')
     ScrollBars = ssVertical
     TabOrder = 0
+    OnDblClick = MemoDblClick
   end
   object btnOpen: TButton
     Left = 360
-    Top = 272
+    Top = 352
     Width = 75
     Height = 25
     Caption = 'Open'
@@ -42,7 +43,7 @@ object frmExtents: TfrmExtents
   end
   object txtfilename: TEdit
     Left = 24
-    Top = 276
+    Top = 356
     Width = 329
     Height = 21
     ReadOnly = True
@@ -50,7 +51,7 @@ object frmExtents: TfrmExtents
   end
   object btnDump: TButton
     Left = 360
-    Top = 304
+    Top = 384
     Width = 75
     Height = 25
     Caption = 'Dump'
@@ -59,7 +60,7 @@ object frmExtents: TfrmExtents
   end
   object ProgressBar: TProgressBar
     Left = 24
-    Top = 312
+    Top = 392
     Width = 329
     Height = 17
     TabOrder = 4
