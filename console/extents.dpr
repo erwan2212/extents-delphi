@@ -3,12 +3,104 @@ program extents;
 {$APPTYPE CONSOLE}
 
 uses
-  windows,SysUtils,
+  windows,SysUtils,math,
   utils in '..\utils.pas';
 
 procedure dolog(msg:string);
 begin
 writeln(msg)
+end;
+
+procedure backup(source,destination:string);
+var
+lpDstName,lpSrcName:pchar;
+Clusters: TClusters;
+Extents_: TExtents_;
+FileSize, ClusterSize,FullSize,BlockSize, CopyedSize:int64;
+ r,ClCount,i: ULONG;
+Name: array[0..6] of Char;
+Progress,SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
+hDrive, hFile: THandle;
+ Buff: PByte;
+Offset: LARGE_INTEGER;
+Bytes: ULONG; 
+begin
+
+lpSrcName :=pchar(source );
+
+lpDstName :=pchar(destination );;
+{$i-}deletefile(lpDstName );{$i+}
+//lets get the cluster size
+Name[0] := lpSrcName[0];
+  Name[1] := ':';
+  Name[2] := Char(0);
+  FreeClusters := 0;
+  NumOfClusters := 0;
+  GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
+  ClusterSize := SecPerCl * BtPerSec;
+//
+Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
+//
+FullSize := FileSize;
+
+  if (Clusters <> nil) then
+  begin
+    Name[0] := '\';
+    Name[1] := '\';
+    Name[2] := '.';
+    Name[3] := '\';
+    Name[4] := lpSrcName[0];
+    Name[5] := ':';
+    Name[6] := Char(0);
+
+    hDrive := CreateFile(Name, GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE, nil, OPEN_EXISTING, 0, 0);
+
+    if (hDrive <> INVALID_HANDLE_VALUE) then
+    begin
+      hFile := CreateFile(lpDstName, GENERIC_WRITE, 0, nil, CREATE_NEW, 0, 0);
+
+      if (hFile <> INVALID_HANDLE_VALUE) then
+      begin
+        GetMem(Buff, ClusterSize);
+
+        r := 0;
+        CopyedSize := 0;
+        while (r < ClCount) do
+        begin
+          //Application.ProcessMessages;
+
+          Offset.QuadPart := ClusterSize * Clusters[r];
+
+          SetFilePointer(hDrive, Offset.LowPart, @Offset.HighPart, FILE_BEGIN);
+
+          ReadFile(hDrive, Buff^, ClusterSize, Bytes, nil);
+
+          BlockSize := Min(FileSize, ClusterSize);
+
+          WriteFile(hFile, Buff^, BlockSize, Bytes, nil);
+
+          CopyedSize := CopyedSize + BlockSize;
+          FileSize := FileSize - BlockSize;
+          if FullSize <> 0 then
+            Progress :=  Round (CopyedSize*100 / FullSize) 
+          else
+            Progress := 100 ;
+          Inc(r);
+          //ProgressBar.Position :=Progress ;
+          write('.');
+        end;
+        FreeMem(Buff);
+        CloseHandle(hFile);
+        Progress := 100 ;
+        //Result := True;
+        dolog('');
+        dolog('copy completed, '+inttostr(fullsize)+' bytes copied');
+      end;
+      CloseHandle(hDrive);
+    end;
+    Clusters := nil;
+  end;
+//    
 end;
 
 procedure get_details(filename:string);
@@ -63,7 +155,7 @@ end;
 //
   dolog('***************************');
   dolog('Filename:'+filename );
-  dolog('File Cluster count :'+inttostr(clcount)+' ('+inttostr(clcount*SecPerCl * BtPerSec))+' bytes)';
+  dolog('File Cluster count :'+inttostr(clcount)+' ('+inttostr(clcount*SecPerCl * BtPerSec)+' bytes)');
   dolog('File size in bytes :'+inttostr(FileSize));
   dolog('File cluster first :'+inttostr(clusters[low(clusters)]));
   dolog('Extents count :'+inttostr(length(extents_)));
@@ -101,12 +193,13 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
+  writeln('extents 1.0 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
-    writeln('extents 1.0 by erwan2212@gmail.com');
     writeln('extents filename');
+    writeln('extents source destination');
     exit;
     end;
-
-  get_details(paramstr(1)) ;
+  if paramcount=1 then get_details(paramstr(1)) ;
+  if paramcount=2 then backup(paramstr(1),paramstr(2));
 end.
