@@ -5,7 +5,8 @@ uses
   madLinkDisAsm,
   madListModules,
   Forms,
-  ufrmExtents in 'ufrmExtents.pas' {frmExtents};
+  ufrmExtents in 'ufrmExtents.pas' {frmExtents},
+  utils in 'utils.pas';
 
 {$R *.res}
 {$R uac.res}
