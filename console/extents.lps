@@ -4,27 +4,120 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
         <Filename Value="extents.dpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="77" Y="23"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="117"/>
+        <CursorPos X="42" Y="136"/>
+        <UsageCount Value="23"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\utils.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="103"/>
+        <CursorPos X="77" Y="144"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="C:\FPC\3.0.0\source\packages\winunits-jedi\src\jwawinbase.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="5782"/>
+        <CursorPos X="42" Y="5793"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="C:\FPC\3.0.0\source\rtl\win\wininc\redef.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="477"/>
+        <CursorPos X="11" Y="498"/>
+        <UsageCount Value="10"/>
+      </Unit3>
     </Units>
-    <JumpHistory HistoryIndex="-1"/>
+    <JumpHistory Count="19" HistoryIndex="18">
+      <Position1>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="23" Column="77" TopLine="173"/>
+      </Position1>
+      <Position2>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="133" Column="31" TopLine="112"/>
+      </Position2>
+      <Position3>
+        <Filename Value="..\utils.pas"/>
+        <Caret Line="60" Column="10" TopLine="44"/>
+      </Position3>
+      <Position4>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="201" Column="43" TopLine="173"/>
+      </Position4>
+      <Position5>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="122" Column="14" TopLine="58"/>
+      </Position5>
+      <Position6>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="6" Column="36"/>
+      </Position6>
+      <Position7>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="76" Column="19" TopLine="60"/>
+      </Position7>
+      <Position8>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="80" Column="19" TopLine="64"/>
+      </Position8>
+      <Position9>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="122" Column="53" TopLine="108"/>
+      </Position9>
+      <Position10>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="124" Column="30" TopLine="105"/>
+      </Position10>
+      <Position11>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="10" Column="51"/>
+      </Position11>
+      <Position12>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="83" Column="18"/>
+      </Position12>
+      <Position13>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="22" Column="36"/>
+      </Position13>
+      <Position14>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="139" Column="125" TopLine="119"/>
+      </Position14>
+      <Position15>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="10"/>
+      </Position15>
+      <Position16>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="127" Column="7" TopLine="4"/>
+      </Position16>
+      <Position17>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="128" Column="47" TopLine="112"/>
+      </Position17>
+      <Position18>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="129" Column="46" TopLine="112"/>
+      </Position18>
+      <Position19>
+        <Filename Value="extents.dpr"/>
+        <Caret Line="133" Column="87" TopLine="117"/>
+      </Position19>
+    </JumpHistory>
   </ProjectSession>
 </CONFIG>

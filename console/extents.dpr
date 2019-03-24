@@ -6,6 +6,9 @@ uses
   windows,SysUtils,math,
   utils in '..\utils.pas';
 
+function GetVolumePathName(lpszFileName:LPCTSTR; lpszVolumePathName:LPTSTR; cchBufferLength:DWORD): BOOL; stdcall external Kernel32 name 'GetVolumePathNameA';
+function GetVolumePathNamesForVolumeName(lpszVolumeName: LPCTSTR;lpszVolumePathNames: LPTSTR;cchBufferLength: DWORD;lpcchReturnLength:PDWORD):BOOL; stdcall external Kernel32 name 'GetVolumePathNamesForVolumeNameA';
+
 procedure dolog(msg:string);
 begin
 writeln(msg)
@@ -73,11 +76,11 @@ FullSize := FileSize;
 
           SetFilePointer(hDrive, Offset.LowPart, @Offset.HighPart, FILE_BEGIN);
 
-          ReadFile(hDrive, Buff^, ClusterSize, Bytes, nil);
+          windows.ReadFile(hDrive, Buff^, ClusterSize, Bytes, nil);
 
           BlockSize := Min(FileSize, ClusterSize);
 
-          WriteFile(hFile, Buff^, BlockSize, Bytes, nil);
+          windows.WriteFile(hFile, Buff^, BlockSize, Bytes, nil);
 
           CopyedSize := CopyedSize + BlockSize;
           FileSize := FileSize - BlockSize;
@@ -111,12 +114,31 @@ Extents_: TExtents_;
 FileSize, ClusterSize:int64;
 ClCount,i,sector: ULONG;
 Name: array[0..6] of Char;
-SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
+returned,SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
 lba:int64;
 FSName,VolName:array[0..255] of char;
 FSSysFlags,maxCmp   : DWord;
+volumepathname:lptstr;
+vol:string;
 begin
-
+//in case full path name is not provided and file is in current dir
+if (pos(':',filename)=0) and (pos('?',filename)=0) then filename:=GetCurrentDir +'\'+ filename;
+//in case user provide a volume path
+if pos('?',filename)>0 then
+   begin
+     try
+     getmem(volumepathname ,MAX_PATH );
+     //if GetVolumePathName(pchar(filename),volumepathname,MAX_PATH) then writeln(volumepathname ) else dolog('GetVolumePathNameA failed');
+     //above works but lets do it the old way...
+     vol:=copy(filename,1,pos('}\',filename)+1);
+     delete(filename,1,pos('}\',filename)+1);
+     //dolog(vol);dolog(filename);
+     if GetVolumePathNamesForVolumeName(pchar(vol),volumepathname,MAX_PATH ,@returned) then filename:=volumepathname+filename;
+     finally
+     freemem(volumepathname ,MAX_PATH );
+     end;
+   end;
+if not FileExists (filename) then begin dolog('file cannot be found');exit;end;
 lpSrcName:=pchar(filename);
 //lets get the cluster size
 Name[0] := lpSrcName[0];
@@ -124,13 +146,15 @@ Name[0] := lpSrcName[0];
   Name[2] := Char(0);
   FreeClusters := 0;
   NumOfClusters := 0;
-  GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
+  SecPerCl:=0; BtPerSec:=0;
+  ClusterSize:=0;
+  if GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters)=false then begin dolog('GetDiskFreeSpace failed');exit;end;
   ClusterSize := SecPerCl * BtPerSec;
 //
 try
 Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
 except
-on e:exception do dolog(e.Message );
+on e:exception do dolog('GetFileClusters:'+e.Message );
 end;
 //
   dolog('***************************');
@@ -196,8 +220,8 @@ begin
   writeln('extents 1.0 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
-    writeln('extents filename');
-    writeln('extents source destination');
+    writeln('extents path_to_filename');
+    writeln('extents path_to_source path_to_destination');
     exit;
     end;
   if paramcount=1 then get_details(paramstr(1)) ;
