@@ -57,7 +57,7 @@ PVOLUME_PHYSICAL_OFFSETS=VOLUME_PHYSICAL_OFFSETS;
   end;
   PRETRIEVAL_POINTERS_BUFFER = ^RETRIEVAL_POINTERS_BUFFER;
 
-function GetFileClusters(lpFileName: PChar; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;  
+function GetFileClusters(lpFileName: string; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
 
 implementation
@@ -70,12 +70,12 @@ bytesReturned:dword;
 volumeHandle:thandle;
 begin
 
-		logicalOffset.LogicalOffset := LogicalOffset_; //inLcn.QuadPart * clusterSizeInBytes;
+   logicalOffset.LogicalOffset := LogicalOffset_; //inLcn.QuadPart * clusterSizeInBytes;
 
     volumeHandle:=thandle(-1);
     volumeHandle := CreateFile(
 		pchar('\\.\'+copy(filename,1,2)),
-		GENERIC_READ or GENERIC_WRITE,
+		0 {GENERIC_READ or GENERIC_WRITE},
 		FILE_SHARE_READ or FILE_SHARE_WRITE,
 		nil,
 		OPEN_EXISTING,
@@ -104,7 +104,7 @@ begin
  CloseHandle(volumeHandle);
 end;
 
-function GetFileClusters(lpFileName: PChar; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
+function GetFileClusters(lpFileName: string; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 var
   hFile: THandle;
   OutSize: ULONG;
@@ -114,15 +114,14 @@ var
   InBuf: STARTING_VCN_INPUT_BUFFER;
   OutBuf: PRETRIEVAL_POINTERS_BUFFER;
 begin
-  Clusters := nil;
-
-  hFile := CreateFile(lpFileName, generic_read,
+  //Clusters := nil;
+  hFile := CreateFile(pchar(lpFileName), generic_read,
     FILE_SHARE_READ ,
     nil, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
 
     if( hFile = INVALID_HANDLE_VALUE ) then
     // try again wit other flags
-    hFile := CreateFile(lpFileName,
+    hFile := CreateFile(pchar(lpFileName),
         FILE_READ_ATTRIBUTES,
         FILE_SHARE_READ,
         nil, OPEN_EXISTING,
@@ -131,18 +130,16 @@ begin
 
     if( hFile = INVALID_HANDLE_VALUE ) then
     // try again as directory
-    hFile := CreateFile(lpFileName,
+    hFile := CreateFile(pchar(lpFileName),
             GENERIC_READ,
             FILE_SHARE_READ,
             nil, OPEN_EXISTING,
             FILE_FLAG_BACKUP_SEMANTICS, 0);
-
   if (hFile <> INVALID_HANDLE_VALUE) then
   begin
-    FileSize := GetFileSize(hFile, nil);
-
+    //FileSize := GetFileSize(hFile, nil);
+    Int64Rec(FileSize).Lo := GetFileSize(hFile, @Int64Rec(FileSize).Hi);
     OutSize := SizeOf(RETRIEVAL_POINTERS_BUFFER) + (FileSize div ClusterSize) * SizeOf(OutBuf^.Extents);
-
     GetMem(OutBuf, OutSize);
 
     InBuf.StartingVcn.QuadPart := 0;

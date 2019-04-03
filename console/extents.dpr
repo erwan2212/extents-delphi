@@ -16,12 +16,11 @@ end;
 
 procedure backup(source,destination:string);
 var
-lpDstName,lpSrcName:pchar;
 Clusters: TClusters;
 Extents_: TExtents_;
 FileSize, ClusterSize,FullSize,BlockSize, CopyedSize:int64;
  r,ClCount,i: ULONG;
-Name: array[0..6] of Char;
+Name: array[0..2] of ansiChar;
 Progress,SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
 hDrive, hFile: THandle;
  Buff: PByte;
@@ -29,12 +28,9 @@ Offset: LARGE_INTEGER;
 Bytes: ULONG; 
 begin
 
-lpSrcName :=pchar(source );
-
-lpDstName :=pchar(destination );;
-{$i-}deletefile(lpDstName );{$i+}
+{$i-}deletefile(destination );{$i+}
 //lets get the cluster size
-Name[0] := lpSrcName[0];
+Name[0] := source[1];
   Name[1] := ':';
   Name[2] := Char(0);
   FreeClusters := 0;
@@ -42,7 +38,7 @@ Name[0] := lpSrcName[0];
   GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
-Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
+Clusters := GetFileClusters(pchar(source), ClusterSize, @ClCount, FileSize,extents_);
 //
 FullSize := FileSize;
 
@@ -52,7 +48,7 @@ FullSize := FileSize;
     Name[1] := '\';
     Name[2] := '.';
     Name[3] := '\';
-    Name[4] := lpSrcName[0];
+    Name[4] := source[1];
     Name[5] := ':';
     Name[6] := Char(0);
 
@@ -60,7 +56,7 @@ FullSize := FileSize;
 
     if (hDrive <> INVALID_HANDLE_VALUE) then
     begin
-      hFile := CreateFile(lpDstName, GENERIC_WRITE, 0, nil, CREATE_NEW, 0, 0);
+      hFile := CreateFile(pchar(destination), GENERIC_WRITE, 0, nil, CREATE_NEW, 0, 0);
 
       if (hFile <> INVALID_HANDLE_VALUE) then
       begin
@@ -108,15 +104,14 @@ end;
 
 procedure get_details(filename:string);
 var
-lpSrcName:pchar;
 Clusters: TClusters;
 Extents_: TExtents_;
 FileSize, ClusterSize:int64;
 ClCount,i,sector: ULONG;
-Name: array[0..6] of Char;
+Name: array[0..2] of ansiChar;
 returned,SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
 lba:int64;
-FSName,VolName:array[0..255] of char;
+FSName,VolName:array[0..255] of ansichar;
 FSSysFlags,maxCmp   : DWord;
 volumepathname:lptstr;
 vol:string;
@@ -139,28 +134,30 @@ if pos('?',filename)>0 then
      end;
    end;
 if not FileExists (filename) then begin dolog('file cannot be found');exit;end;
-lpSrcName:=pchar(filename);
 //lets get the cluster size
-Name[0] := lpSrcName[0];
+  Name[0] := filename[1];
   Name[1] := ':';
   Name[2] := Char(0);
   FreeClusters := 0;
   NumOfClusters := 0;
   SecPerCl:=0; BtPerSec:=0;
   ClusterSize:=0;
-  if GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters)=false then begin dolog('GetDiskFreeSpace failed');exit;end;
+  if GetDiskFreeSpaceA(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters)=false then begin dolog('GetDiskFreeSpace failed');exit;end;
   ClusterSize := SecPerCl * BtPerSec;
 //
+dolog('***************************');
+dolog('Bytes Per Sector:'+inttostr(BtPerSec));
+dolog('Sectors per Cluster:'+inttostr(SecPerCl));
+dolog('Cluster size :'+inttostr(SecPerCl * BtPerSec));
+//
 try
-Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
+FileSize:=0;ClCount:=0;
+SetLength(Clusters ,0);
+SetLength(extents_ ,0);
+Clusters := GetFileClusters(filename, ClusterSize, @ClCount, FileSize,extents_);
 except
 on e:exception do dolog('GetFileClusters:'+e.Message );
 end;
-//
-  dolog('***************************');
-  dolog('Bytes Per Sector:'+inttostr(BtPerSec));
-  dolog('Sectors per Cluster:'+inttostr(SecPerCl));
-  dolog('Cluster size :'+inttostr(SecPerCl * BtPerSec));
 //
 if high(clusters)<=0 then
   begin
@@ -168,7 +165,7 @@ if high(clusters)<=0 then
   dolog('no clusters found...');
   exit;
   end;
-if GetVolumeInformation(PChar(copy(lpSrcName,1,3)), @VolName[0], MAX_PATH, nil,
+if GetVolumeInformationA(PansiChar(copy(filename,1,3)), @VolName[0], MAX_PATH, nil,
                        maxCmp, FSSysFlags, @FSName[0], MAX_PATH)=true then
 begin
 lba:=0;
@@ -179,7 +176,7 @@ end;
 //
   dolog('***************************');
   dolog('Filename:'+filename );
-  dolog('File Cluster count :'+inttostr(clcount)+' ('+inttostr(clcount*SecPerCl * BtPerSec)+' bytes)');
+  dolog('File Cluster count :'+inttostr(clcount)+' ('+inttostr(int64(clcount)*SecPerCl * BtPerSec)+' bytes)');
   dolog('File size in bytes :'+inttostr(FileSize));
   dolog('File cluster first :'+inttostr(clusters[low(clusters)]));
   dolog('Extents count :'+inttostr(length(extents_)));
@@ -193,7 +190,7 @@ end;
   sector:=0;lba:=0;
   for i:=low(extents_) to high(extents_)  do
   begin
-  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(lpSrcName,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
   dolog('extents_['+inttostr(i)+'] - '
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
@@ -217,7 +214,7 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
-  writeln('extents 1.0 by erwan2212@gmail.com');
+  writeln('extents 1.1 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
     writeln('extents path_to_filename');

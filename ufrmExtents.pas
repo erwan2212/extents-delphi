@@ -52,30 +52,29 @@ end;
 
 procedure TfrmExtents.get_details(filename:string);
 var
-lpSrcName:pchar;
 Clusters: TClusters;
 Extents_: TExtents_;
 FileSize, ClusterSize:int64;
 ClCount,i,sector: ULONG;
-Name: array[0..6] of Char;
+Name: array[0..2] of ansiChar;
 SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
 lba:int64;
-FSName,VolName:array[0..255] of char;
+FSName,VolName:array[0..255] of ansichar;
 FSSysFlags,maxCmp   : DWord;
 begin
 
-lpSrcName:=pchar(filename);
+
 //lets get the cluster size
-Name[0] := lpSrcName[0];
+Name[0] := filename[1];
   Name[1] := ':';
   Name[2] := Char(0);
   FreeClusters := 0;
   NumOfClusters := 0;
-  GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
+  GetDiskFreeSpaceA(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
 try
-Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
+Clusters := GetFileClusters(filename, ClusterSize, @ClCount, FileSize,extents_);
 except
 on e:exception do dolog(e.Message );
 end;
@@ -91,7 +90,7 @@ if high(clusters)<=0 then
   dolog('no clusters found...');
   exit;
   end;
-if GetVolumeInformation(PChar(copy(lpSrcName,1,3)), @VolName[0], MAX_PATH, nil,
+if GetVolumeInformation(PChar(copy(filename,1,3)), @VolName[0], MAX_PATH, nil,
                        maxCmp, FSSysFlags, @FSName[0], MAX_PATH)=true then
 begin
 lba:=0;
@@ -102,7 +101,7 @@ end;
 //
   dolog('***************************');
   dolog('Filename:'+filename );
-  dolog('File Cluster count :'+inttostr(clcount)+' -> in bytes: '+inttostr(clcount*SecPerCl * BtPerSec));
+  dolog('File Cluster count :'+inttostr(clcount)+' -> in bytes: '+inttostr(int64(clcount)*SecPerCl * BtPerSec));
   dolog('File size in bytes :'+inttostr(FileSize));
   dolog('File cluster first :'+inttostr(clusters[low(clusters)]));
   dolog('Extents count :'+inttostr(length(extents_)));
@@ -116,7 +115,7 @@ end;
   sector:=0;lba:=0;
   for i:=low(extents_) to high(extents_)  do
   begin
-  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(lpSrcName,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
   dolog('extents_['+inttostr(i)+'] - '
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
