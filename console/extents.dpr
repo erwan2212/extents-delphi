@@ -159,7 +159,7 @@ except
 on e:exception do dolog('GetFileClusters:'+e.Message );
 end;
 //
-if high(clusters)<=0 then
+if length(clusters)<=0 then
   begin
   dolog('');
   dolog('no clusters found...');
@@ -214,7 +214,7 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
-  writeln('extents 1.1 by erwan2212@gmail.com');
+  writeln('extents 1.2 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
     writeln('extents path_to_filename');

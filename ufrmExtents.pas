@@ -84,7 +84,7 @@ end;
   dolog('Sectors per Cluster:'+inttostr(SecPerCl));
   dolog('Cluster size :'+inttostr(SecPerCl * BtPerSec));
 //
-if high(clusters)<=0 then
+if length(clusters)<=0 then
   begin
   dolog('');
   dolog('no clusters found...');
