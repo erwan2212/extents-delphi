@@ -9,6 +9,9 @@ uses
 function GetVolumePathName(lpszFileName:LPCTSTR; lpszVolumePathName:LPTSTR; cchBufferLength:DWORD): BOOL; stdcall external Kernel32 name 'GetVolumePathNameA';
 function GetVolumePathNamesForVolumeName(lpszVolumeName: LPCTSTR;lpszVolumePathNames: LPTSTR;cchBufferLength: DWORD;lpcchReturnLength:PDWORD):BOOL; stdcall external Kernel32 name 'GetVolumePathNamesForVolumeNameA';
 
+var
+i64:int64;
+
 procedure dolog(msg:string);
 begin
 writeln(msg)
@@ -214,13 +217,30 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
-  writeln('extents 1.2 by erwan2212@gmail.com');
+  writeln('extents 1.3 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
     writeln('extents path_to_filename');
     writeln('extents path_to_source path_to_destination');
+    writeln('extents translatelog x: logical_pos_in_bytes');
+    writeln('extents translatephy x: phy_pos_in_bytes');
     exit;
     end;
   if paramcount=1 then get_details(paramstr(1)) ;
   if paramcount=2 then backup(paramstr(1),paramstr(2));
+  if paramstr(1)='translatelog' then
+     begin
+     i64:= TranslateLogicalToPhysical(paramstr(2),strtoint64(paramstr(3)));
+     writeln('logical : '+paramstr(3) );
+     writeln('Physical : '+inttostr(i64)+' bytes -> '+inttostr(i64 div 512)+' sectors' );
+     writeln('Physical-logical : '+inttostr(i64-strtoint64(paramstr(3))));
+     end;
+  if paramstr(1)='translatephy' then
+     begin
+     i64:= TranslatePhysicalToLogical(paramstr(2),strtoint64(paramstr(3)));
+     writeln('physical : '+paramstr(3) );
+     writeln('logical : '+inttostr(i64)+' bytes -> '+inttostr(i64 div 512)+' sectors' );
+     writeln('Physical-logical : '+inttostr(strtoint64(paramstr(3))-i64));
+     end;
+
 end.

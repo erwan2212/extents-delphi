@@ -8,6 +8,8 @@ const
   FILE_READ_ATTRIBUTES = $80;
   FSCTL_GET_RETRIEVAL_POINTERS = 589939; //(($00000009) shr 16) or ((28) shr 14) or ((3) shr 2) or (0);
   IOCTL_VOLUME_LOGICAL_TO_PHYSICAL = $00560020;
+  IOCTL_VOLUME_PHYSICAL_TO_LOGICAL = $00560024;
+  IOCTL_STORAGE_GET_DEVICE_NUMBER =  $002D1080;
 
 type
   ULONGLONG = ULONG;
@@ -57,10 +59,74 @@ PVOLUME_PHYSICAL_OFFSETS=VOLUME_PHYSICAL_OFFSETS;
   end;
   PRETRIEVAL_POINTERS_BUFFER = ^RETRIEVAL_POINTERS_BUFFER;
 
+type
+  _STORAGE_DEVICE_NUMBER = record
+    DeviceType: DWORD; //DEVICE_TYPE;
+    //
+    // The number of this device
+    //
+    DeviceNumber: DWORD;
+    //
+    // If the device is partitionable, the partition number of the device.
+    // Otherwise -1
+    //
+    PartitionNumber: DWORD;
+  end;
+
 function GetFileClusters(lpFileName: string; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
+function TranslatePhysicalToLogical(filename:string;PhysicalOffset_:LONGLONG):int64;
 
 implementation
+
+function TranslatePhysicalToLogical(filename:string;PhysicalOffset_:LONGLONG):int64;
+var
+physicalOffset:VOLUME_PHYSICAL_OFFSET;
+logicalOffset:VOLUME_LOGICAL_OFFSET;
+bytesReturned:dword;
+volumeHandle:thandle;
+sdn:_STORAGE_DEVICE_NUMBER;
+begin
+
+    volumeHandle:=thandle(-1);
+    volumeHandle := CreateFile(
+		pchar('\\.\'+copy(filename,1,2)),
+		0 {GENERIC_READ or GENERIC_WRITE},
+		FILE_SHARE_READ or FILE_SHARE_WRITE,
+		nil,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		0);
+
+    if volumeHandle=thandle(-1) then exit;
+
+   //
+  if DeviceIoControl(volumeHandle,IOCTL_STORAGE_GET_DEVICE_NUMBER,nil, 0, @sdn, sizeof(sdn),bytesReturned, nil)=true
+     then physicalOffset.DiskNumber:=sdn.DeviceNumber
+     else exit;
+  //
+   physicalOffset.Offset   := PhysicalOffset_; //inLcn.QuadPart * clusterSizeInBytes;
+
+
+		if DeviceIoControl(
+			volumeHandle,
+			IOCTL_VOLUME_PHYSICAL_TO_LOGICAL ,
+			@physicalOffset,
+			sizeof(VOLUME_PHYSICAL_OFFSET),
+			@logicalOffset,
+			sizeof(logicalOffset),
+			bytesReturned,
+			nil) then
+    begin
+    result:=logicalOffset.LogicalOffset;
+    //div 512 (BytesPerSector) = lba
+    end
+    else
+		begin
+  	result:=0;
+		end;
+ CloseHandle(volumeHandle);
+end;
 
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
 var
