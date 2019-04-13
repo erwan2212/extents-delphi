@@ -232,15 +232,15 @@ begin
      begin
      i64:= TranslateLogicalToPhysical(paramstr(2),strtoint64(paramstr(3)));
      writeln('logical : '+paramstr(3) );
-     writeln('Physical : '+inttostr(i64)+' bytes -> '+inttostr(i64 div 512)+' sectors' );
-     writeln('Physical-logical : '+inttostr(i64-strtoint64(paramstr(3))));
+     writeln('Physical : '+inttostr(i64)+' bytes - '+inttostr(i64 div 512)+' sectors' );
+     writeln('Sectors-Before : '+inttostr(i64-strtoint64(paramstr(3))));
      end;
   if paramstr(1)='translatephy' then
      begin
      i64:= TranslatePhysicalToLogical(paramstr(2),strtoint64(paramstr(3)));
      writeln('physical : '+paramstr(3) );
-     writeln('logical : '+inttostr(i64)+' bytes -> '+inttostr(i64 div 512)+' sectors' );
-     writeln('Physical-logical : '+inttostr(strtoint64(paramstr(3))-i64));
+     writeln('logical : '+inttostr(i64)+' bytes - '+inttostr(i64 div 512)+' sectors' );
+     writeln('Sectors-Before : '+inttostr(strtoint64(paramstr(3))-i64));
      end;
 
 end.
