@@ -73,7 +73,7 @@ type
     PartitionNumber: DWORD;
   end;
 
-function GetFileClusters(lpFileName: string; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
+function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
 function TranslatePhysicalToLogical(filename:string;PhysicalOffset_:LONGLONG):int64;
 
@@ -170,7 +170,7 @@ begin
  CloseHandle(volumeHandle);
 end;
 
-function GetFileClusters(lpFileName: string; ClusterSize: Int64; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
+function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 var
   hFile: THandle;
   OutSize: ULONG;
@@ -239,7 +239,7 @@ begin
           Inc(Lcn.QuadPart);
         end;
 
-        extents_ [r].sectors :=sectors*ClusterSize div 512;
+        extents_ [r].sectors :=sectors*ClusterSize div BtPerSec;
 
         //if r<OutBuf^.ExtentCount -1 then
         begin

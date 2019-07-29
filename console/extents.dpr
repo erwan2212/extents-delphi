@@ -41,7 +41,7 @@ Name[0] := source[1];
   GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
-Clusters := GetFileClusters(pchar(source), ClusterSize, @ClCount, FileSize,extents_);
+Clusters := GetFileClusters(pchar(source), ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
 //
 FullSize := FileSize;
 
@@ -157,7 +157,7 @@ try
 FileSize:=0;ClCount:=0;
 SetLength(Clusters ,0);
 SetLength(extents_ ,0);
-Clusters := GetFileClusters(filename, ClusterSize, @ClCount, FileSize,extents_);
+Clusters := GetFileClusters(filename, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
 except
 on e:exception do dolog('GetFileClusters:'+e.Message );
 end;
@@ -217,7 +217,7 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
-  writeln('extents 1.3 by erwan2212@gmail.com');
+  writeln('extents 1.4 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
     writeln('extents path_to_filename');

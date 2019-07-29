@@ -74,7 +74,7 @@ Name[0] := filename[1];
   ClusterSize := SecPerCl * BtPerSec;
 //
 try
-Clusters := GetFileClusters(filename, ClusterSize, @ClCount, FileSize,extents_);
+Clusters := GetFileClusters(filename, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
 except
 on e:exception do dolog(e.Message );
 end;
@@ -181,7 +181,7 @@ Name[0] := lpSrcName[0];
   GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
-Clusters := GetFileClusters(lpSrcName, ClusterSize, @ClCount, FileSize,extents_);
+Clusters := GetFileClusters(lpSrcName, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
 //
 FullSize := FileSize;
 
