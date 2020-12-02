@@ -1,0 +1,834 @@
+
+--------------------------------2020/12/1 21:06:10--------------------------------
+FastMM has detected an error during a FreeMem operation. The block footer has been corrupted. 
+
+The block size is: 32
+
+This block was allocated by thread 0x25DC, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][219]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF0FA9 [RtlAllocateHeap]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 792
+
+The block was previously freed by thread 0x25DC, and the stack trace (return addresses) at the time was:
+402A40 [JclSysInfo][JclSysInfo][@ReallocMem]
+41C54C [Classes][Classes][TList.SetCapacity]
+41C2A1 [Classes][Classes][TList.Clear]
+41C24A [Classes][Classes][TList.Destroy]
+403AC3 [jpeg][jpeg][TObject.Free]
+445615 [Controls][Controls][TWinControl.FindNextControl]
+4593FC [Forms][Forms][TCustomForm.SetActive]
+459BE8 [Forms][Forms][TCustomForm.WMActivate]
+43FD1B [Controls][Controls][TControl.WndProc]
+76A6EEA5 [Unknown function at GetDesktopWindow]
+74CC2F08 [Unknown function at BufferedPaintUnInit]
+
+The current thread ID is 0x25DC, and the stack trace (return addresses) leading to this error is:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+405B70 [System][System][@DynArrayClear]
+47B28B [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][117]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF0FA9 [RtlAllocateHeap]
+775CC308 [Unknown function at ScriptStringAnalyse]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6380:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 DF F6 3C 00 00 00 00 00 10 03 00 00 00 00 00 00
+62 00 00 00 00 00 00 00 00 00 00 00 A0 18 9A 7F 00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00
+0C 02 00 00 DF 29 40 00 0A 45 42 00 51 46 42 00 97 58 42 00 0F 59 42 00 44 46 44 00 22 86 45 00
+1B FD 43 00 68 2C 44 00 2A 7B 45 00 5A 1E 44 00 DC 25 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 20 00 00 00 00 00 00 00 E9 1E C0 82 A0 46 9A 7F 05 00 00 00 97 14 10 2A 80 F8 80 80
+00 00 00 00 0F 00 00 FF 00 00 00 00 00 00 00 00 16 E1 3F 7D 80 80 80 80 00 00 00 00 A0 18 9A 7F
+00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00 4F 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ß  ö  <  .  .  .  .  .  .  .  .  .  .  .  .  .
+b  .  .  .  .  .  .  .  .  .  .  .     .  š    .  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .
+.  .  .  .  ß  )  @  .  .  E  B  .  Q  F  B  .  —  X  B  .  .  Y  B  .  D  F  D  .  "  †  E  .
+.  ý  C  .  h  ,  D  .  *  {  E  .  Z  .  D  .  Ü  %  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .     .  .  .  .  .  .  .  é  .  À  ‚     F  š    .  .  .  .  —  .  .  *  €  ø  €  €
+.  .  .  .  .  .  .  ÿ  .  .  .  .  .  .  .  .  .  á  ?  }  €  €  €  €  .  .  .  .     .  š  
+.  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .  O  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:06:55--------------------------------
+FastMM has detected an error during a FreeMem operation. The block footer has been corrupted. 
+
+The block size is: 32
+
+This block was allocated by thread 0x25DC, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][219]
+4029DF [JclSysInfo][JclSysInfo][@GetMem]
+4048F9 [System][System][@NewAnsiString]
+40493C [System][System][@LStrFromPCharLen]
+47B63E [ufrmExtents.pas][ufrmExtents][TfrmExtents.backup][189]
+408E06 [FastMM4][FastMM4][CalculateHeaderCheckSum][9132]
+409DF8 [FastMM4][FastMM4][DebugGetMem][9720]
+43FAEB [Controls][Controls][TControl.Perform]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 856
+
+The block was previously freed by thread 0x25DC, and the stack trace (return addresses) at the time was:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+40486E [System][System][@LStrArrayClr]
+47B27D [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][117]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF0FA9 [RtlAllocateHeap]
+775CC308 [Unknown function at ScriptStringAnalyse]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+The current thread ID is 0x25DC, and the stack trace (return addresses) leading to this error is:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+405B70 [System][System][@DynArrayClear]
+47B8A4 [ufrmExtents.pas][ufrmExtents][TfrmExtents.backup][253]
+47B997 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnDumpClick][268]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF0FA9 [RtlAllocateHeap]
+775CC308 [Unknown function at ScriptStringAnalyse]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6F30:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 DF F6 3C 00 00 00 00 00 10 03 00 00 00 00 00 00
+62 00 00 00 00 00 00 00 00 00 00 00 A0 18 9A 7F 00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00
+4D 02 00 00 FA 9F 40 00 27 2A 40 00 4C C5 41 00 0C C4 41 00 6D C2 41 00 DD 1E 42 00 38 1F 42 00
+7E 1D 42 00 30 DA 43 00 59 0E 44 00 37 82 43 00 DC 25 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 20 00 00 00 00 00 00 00 C6 10 B3 82 70 65 93 7F 00 53 97 7F E0 55 97 7F C0 58 97 7F
+A0 5B 97 7F 80 5E 97 7F 10 F3 91 7F 30 11 95 7F 39 EF 4C 7D 80 80 80 80 00 00 00 00 A0 18 9A 7F
+00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00 BD 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ß  ö  <  .  .  .  .  .  .  .  .  .  .  .  .  .
+b  .  .  .  .  .  .  .  .  .  .  .     .  š    .  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .
+M  .  .  .  ú  Ÿ  @  .  '  *  @  .  L  Å  A  .  .  Ä  A  .  m  Â  A  .  Ý  .  B  .  8  .  B  .
+~  .  B  .  0  Ú  C  .  Y  .  D  .  7  ‚  C  .  Ü  %  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .     .  .  .  .  .  .  .  Æ  .  ³  ‚  p  e  “    .  S  —    à  U  —    À  X  —  
+   [  —    €  ^  —    .  ó  ‘    0  .  •    9  ï  L  }  €  €  €  €  .  .  .  .     .  š  
+.  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .  ½  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:14:39--------------------------------
+FastMM has detected an error during a FreeMem operation. The block footer has been corrupted. 
+
+The block size is: 32
+
+This block was allocated by thread 0x13D4, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][221]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 792
+
+The block was previously freed by thread 0x13D4, and the stack trace (return addresses) at the time was:
+402A40 [JclSysInfo][JclSysInfo][@ReallocMem]
+41C54C [Classes][Classes][TList.SetCapacity]
+41C2A1 [Classes][Classes][TList.Clear]
+41C24A [Classes][Classes][TList.Destroy]
+403AC3 [jpeg][jpeg][TObject.Free]
+445615 [Controls][Controls][TWinControl.FindNextControl]
+4593FC [Forms][Forms][TCustomForm.SetActive]
+459BE8 [Forms][Forms][TCustomForm.WMActivate]
+43FD1B [Controls][Controls][TControl.WndProc]
+76A6EEA5 [Unknown function at GetDesktopWindow]
+74CC2F08 [Unknown function at BufferedPaintUnInit]
+
+The current thread ID is 0x13D4, and the stack trace (return addresses) leading to this error is:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+405B70 [System][System][@DynArrayClear]
+47B28B [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][117]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6380:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 DF F6 3C 00 00 00 00 00 10 03 00 00 00 00 00 00
+62 00 00 00 00 00 00 00 00 00 00 00 A0 18 9A 7F 00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00
+0C 02 00 00 DF 29 40 00 0A 45 42 00 51 46 42 00 97 58 42 00 0F 59 42 00 44 46 44 00 22 86 45 00
+1B FD 43 00 68 2C 44 00 2A 7B 45 00 5A 1E 44 00 D4 13 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 20 00 00 00 00 00 00 00 E1 0C C0 82 A0 46 9A 7F 05 00 00 00 65 1C 10 CD 80 F8 80 80
+00 00 00 00 0F 00 00 FF 00 00 00 00 00 00 00 00 1E F3 3F 7D 80 80 80 80 00 00 00 00 A0 18 9A 7F
+00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00 4F 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ß  ö  <  .  .  .  .  .  .  .  .  .  .  .  .  .
+b  .  .  .  .  .  .  .  .  .  .  .     .  š    .  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .
+.  .  .  .  ß  )  @  .  .  E  B  .  Q  F  B  .  —  X  B  .  .  Y  B  .  D  F  D  .  "  †  E  .
+.  ý  C  .  h  ,  D  .  *  {  E  .  Z  .  D  .  Ô  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .     .  .  .  .  .  .  .  á  .  À  ‚     F  š    .  .  .  .  e  .  .  Í  €  ø  €  €
+.  .  .  .  .  .  .  ÿ  .  .  .  .  .  .  .  .  .  ó  ?  }  €  €  €  €  .  .  .  .     .  š  
+.  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .  O  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:20:30--------------------------------
+FastMM has detected an error during a FreeMem operation. The block footer has been corrupted. 
+
+The block size is: 32
+
+This block was allocated by thread 0x2984, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][221]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 792
+
+The block was previously freed by thread 0x2984, and the stack trace (return addresses) at the time was:
+402A40 [JclSysInfo][JclSysInfo][@ReallocMem]
+41C54C [Classes][Classes][TList.SetCapacity]
+41C2A1 [Classes][Classes][TList.Clear]
+41C24A [Classes][Classes][TList.Destroy]
+403AC3 [jpeg][jpeg][TObject.Free]
+445615 [Controls][Controls][TWinControl.FindNextControl]
+4593FC [Forms][Forms][TCustomForm.SetActive]
+459BE8 [Forms][Forms][TCustomForm.WMActivate]
+43FD1B [Controls][Controls][TControl.WndProc]
+76A6EEA5 [Unknown function at GetDesktopWindow]
+74CC2F08 [Unknown function at BufferedPaintUnInit]
+
+The current thread ID is 0x2984, and the stack trace (return addresses) leading to this error is:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+405B70 [System][System][@DynArrayClear]
+47B28B [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][117]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6380:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF 00 00 08 00 00 00 00 00
+00 00 01 00 00 00 00 00 00 00 00 00 A0 18 9A 7F 00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00
+0C 02 00 00 DF 29 40 00 0A 45 42 00 51 46 42 00 97 58 42 00 0F 59 42 00 44 46 44 00 22 86 45 00
+1B FD 43 00 68 2C 44 00 2A 7B 45 00 5A 1E 44 00 84 29 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 20 00 00 00 00 00 00 00 91 22 C0 82 A0 46 9A 7F 05 00 00 00 D4 16 10 FD 80 F8 80 80
+00 00 00 00 0F 00 00 FF 00 00 00 00 00 00 00 00 6E DD 3F 7D 80 80 80 80 00 00 00 00 A0 18 9A 7F
+00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00 4F 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .     .  š    .  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .
+.  .  .  .  ß  )  @  .  .  E  B  .  Q  F  B  .  —  X  B  .  .  Y  B  .  D  F  D  .  "  †  E  .
+.  ý  C  .  h  ,  D  .  *  {  E  .  Z  .  D  .  „  )  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .     .  .  .  .  .  .  .  ‘  "  À  ‚     F  š    .  .  .  .  Ô  .  .  ý  €  ø  €  €
+.  .  .  .  .  .  .  ÿ  .  .  .  .  .  .  .  .  n  Ý  ?  }  €  €  €  €  .  .  .  .     .  š  
+.  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .  O  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:20:52--------------------------------
+A memory block has been leaked. The size is: 20
+
+This block was allocated by thread 0x2984, and the stack trace (return addresses) at the time was:
+4029DF [JclSysInfo][JclSysInfo][@GetMem]
+4048F9 [System][System][@NewAnsiString]
+404924 [System][System][@LStrFromPCharLen]
+43E92B [Controls][Controls][TControl.GetText]
+47B502 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+
+The block is currently used for an object of class: AnsiString
+
+The allocation number is: 789
+
+Current memory dump of 256 bytes starting at pointer address 7F967820:
+01 00 00 00 0A 00 00 00 45 3A 5C 32 35 36 2E 69 6D 67 00 00 E1 44 6E 8B 00 00 00 00 81 7E 96 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 03 00 00 DF 29 40 00 F9 48 40 00 24 49 40 00
+7A 03 43 00 07 05 43 00 E2 02 43 00 5F 06 43 00 D4 B4 47 00 B6 FE 43 00 75 84 43 00 69 85 43 00
+84 29 00 00 84 29 00 00 FF 29 40 00 45 48 40 00 4F 53 40 00 D9 52 40 00 33 3B 40 00 76 3A 40 00
+31 3E 40 00 BD 9A 47 00 E5 1F 42 00 EC 1D 42 00 88 DB 43 00 14 00 00 00 00 00 00 00 F1 D9 47 85
+94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 0E 26 B8 7A 00 00 00 00 81 79 96 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 47 03 00 00 DF 29 40 00 F9 48 40 00 24 49 40 00
+63 DC 45 00 2C C5 BE 77 DF 8D 8E 76 D9 8F 08 02 1C 90 08 02 F8 5E 8E 76 36 93 08 02 06 8E 40 00
+.  .  .  .  .  .  .  .  E  :  \  2  5  6  .  i  m  g  .  .  á  D  n  ‹  .  .  .  .    ~  –  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ß  )  @  .  ù  H  @  .  $  I  @  .
+z  .  C  .  .  .  C  .  â  .  C  .  _  .  C  .  Ô  ´  G  .  ¶  þ  C  .  u  „  C  .  i  …  C  .
+„  )  .  .  „  )  .  .  ÿ  )  @  .  E  H  @  .  O  S  @  .  Ù  R  @  .  3  ;  @  .  v  :  @  .
+1  >  @  .  ½  š  G  .  å  .  B  .  ì  .  B  .  ˆ  Û  C  .  .  .  .  .  .  .  .  .  ñ  Ù  G  …
+”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  .  &  ¸  z  .  .  .  .    y  –  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  G  .  .  .  ß  )  @  .  ù  H  @  .  $  I  @  .
+c  Ü  E  .  ,  Å  ¾  w  ß    Ž  v  Ù    .  .  .    .  .  ø  ^  Ž  v  6  “  .  .  .  Ž  @  .
+
+--------------------------------2020/12/1 21:20:52--------------------------------
+FastMM has detected an error during a free block scan operation. The block footer has been corrupted. 
+
+The previous block size was: 32
+
+This block was previously allocated by thread 0x2984, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][221]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The allocation number was: 792
+
+The block was previously freed by thread 0x2984, and the stack trace (return addresses) at the time was:
+402A40 [JclSysInfo][JclSysInfo][@ReallocMem]
+41C54C [Classes][Classes][TList.SetCapacity]
+41C2A1 [Classes][Classes][TList.Clear]
+41C24A [Classes][Classes][TList.Destroy]
+403AC3 [jpeg][jpeg][TObject.Free]
+445615 [Controls][Controls][TWinControl.FindNextControl]
+4593FC [Forms][Forms][TCustomForm.SetActive]
+459BE8 [Forms][Forms][TCustomForm.WMActivate]
+43FD1B [Controls][Controls][TControl.WndProc]
+76A6EEA5 [Unknown function at GetDesktopWindow]
+74CC2F08 [Unknown function at BufferedPaintUnInit]
+
+The current thread ID is 0x2984, and the stack trace (return addresses) leading to this error is:
+40B204 [FastMM4][FastMM4][CheckBlocksOnShutdown][11458]
+40BF9A [FastMM4][FastMM4][FinalizeMemoryManager][13020]
+40C00A [FastMM4][FastMM4][Finalization][13119]
+4044C8 [System][System][FinalizeUnits]
+47C0CD [C:\Users\erwan\Documents\-= SOURCES =-\delphi\system\extents-delphi\extents.dpr][extents][extents][16]
+76677C04 [BaseThreadInitThunk]
+77C0AD8F [Unknown function at RtlInitializeExceptionChain]
+77C0AD5A [Unknown function at RtlInitializeExceptionChain]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6380:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF 00 00 08 00 00 00 00 00
+00 00 01 00 00 00 00 00 00 00 00 00 41 60 9A 7F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0C 02 00 00 DF 29 40 00 0A 45 42 00 51 46 42 00 97 58 42 00 0F 59 42 00 44 46 44 00 22 86 45 00
+1B FD 43 00 68 2C 44 00 2A 7B 45 00 5A 1E 44 00 84 29 00 00 84 29 00 00 FF 29 40 00 18 46 42 00
+94 57 42 00 C3 3A 40 00 EB 0F 44 00 11 60 45 00 F4 6B 45 00 28 4F 45 00 10 D0 40 00 5E 47 40 00
+CD C0 47 00 20 00 00 00 00 00 00 00 F2 B4 61 85 94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 0D 4B 9E 7A 80 80 80 80 00 00 00 00 71 66 9A 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4F 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  A  `  š    .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  ß  )  @  .  .  E  B  .  Q  F  B  .  —  X  B  .  .  Y  B  .  D  F  D  .  "  †  E  .
+.  ý  C  .  h  ,  D  .  *  {  E  .  Z  .  D  .  „  )  .  .  „  )  .  .  ÿ  )  @  .  .  F  B  .
+”  W  B  .  Ã  :  @  .  ë  .  D  .  .  `  E  .  ô  k  E  .  (  O  E  .  .  Ð  @  .  ^  G  @  .
+Í  À  G  .     .  .  .  .  .  .  .  ò  ´  a  …  ”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  .  K  ž  z  €  €  €  €  .  .  .  .  q  f  š  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  O  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:20:54--------------------------------
+A memory block has been leaked. The size is: 589668
+
+This block was allocated by thread 0x2984, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8A9 [utils.pas][utils][GetFileClusters][220]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 791
+
+Current memory dump of 256 bytes starting at pointer address 7F6A0090:
+01 00 00 00 00 00 01 00 FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00
+02 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00
+06 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 09 00 00 00 00 00 00 00
+0A 00 00 00 00 00 00 00 0B 00 00 00 00 00 00 00 0C 00 00 00 00 00 00 00 0D 00 00 00 00 00 00 00
+0E 00 00 00 00 00 00 00 0F 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00 11 00 00 00 00 00 00 00
+12 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 14 00 00 00 00 00 00 00 15 00 00 00 00 00 00 00
+16 00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 18 00 00 00 00 00 00 00 19 00 00 00 00 00 00 00
+1A 00 00 00 00 00 00 00 1B 00 00 00 00 00 00 00 1C 00 00 00 00 00 00 00 1D 00 00 00 00 00 00 00
+.  .  .  .  .  .  .  .  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+
+--------------------------------2020/12/1 21:20:54--------------------------------
+This application has leaked memory. The small block leaks are (excluding expected leaks registered by pointer):
+
+13 - 20 bytes: AnsiString x 1
+
+The sizes of leaked medium and large blocks are (excluding expected leaks registered by pointer): 589668
+
+Note: Memory leak detail is logged to a text file in the same folder as this application. To disable this memory leak check, undefine "EnableMemoryLeakReporting".
+
+--------------------------------2020/12/1 21:24:17--------------------------------
+FastMM has detected an error during a FreeMem operation. The block footer has been corrupted. 
+
+The block size is: 32
+
+This block was allocated by thread 0x46C, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][221]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 792
+
+The block was previously freed by thread 0x46C, and the stack trace (return addresses) at the time was:
+402A40 [JclSysInfo][JclSysInfo][@ReallocMem]
+41C54C [Classes][Classes][TList.SetCapacity]
+41C2A1 [Classes][Classes][TList.Clear]
+41C24A [Classes][Classes][TList.Destroy]
+403AC3 [jpeg][jpeg][TObject.Free]
+445615 [Controls][Controls][TWinControl.FindNextControl]
+4593FC [Forms][Forms][TCustomForm.SetActive]
+459BE8 [Forms][Forms][TCustomForm.WMActivate]
+43FD1B [Controls][Controls][TControl.WndProc]
+76A6EEA5 [Unknown function at GetDesktopWindow]
+74CC2F08 [Unknown function at BufferedPaintUnInit]
+
+The current thread ID is 0x46C, and the stack trace (return addresses) leading to this error is:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+405B70 [System][System][@DynArrayClear]
+47B28B [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][117]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6380:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF 00 00 08 00 00 00 00 00
+00 00 01 00 00 00 00 00 00 00 00 00 A0 18 9A 7F 00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00
+0C 02 00 00 DF 29 40 00 0A 45 42 00 51 46 42 00 97 58 42 00 0F 59 42 00 44 46 44 00 22 86 45 00
+1B FD 43 00 68 2C 44 00 2A 7B 45 00 5A 1E 44 00 6C 04 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 20 00 00 00 00 00 00 00 79 FD BF 82 A0 46 9A 7F 05 00 00 00 01 1C 10 37 80 F8 80 80
+00 00 00 00 0F 00 00 FF 00 00 00 00 00 00 00 00 86 02 40 7D 80 80 80 80 00 00 00 00 A0 18 9A 7F
+00 00 00 00 00 00 00 00 E4 9C 40 00 00 00 00 00 4F 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .     .  š    .  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .
+.  .  .  .  ß  )  @  .  .  E  B  .  Q  F  B  .  —  X  B  .  .  Y  B  .  D  F  D  .  "  †  E  .
+.  ý  C  .  h  ,  D  .  *  {  E  .  Z  .  D  .  l  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .     .  .  .  .  .  .  .  y  ý  ¿  ‚     F  š    .  .  .  .  .  .  .  7  €  ø  €  €
+.  .  .  .  .  .  .  ÿ  .  .  .  .  .  .  .  .  †  .  @  }  €  €  €  €  .  .  .  .     .  š  
+.  .  .  .  .  .  .  .  ä  œ  @  .  .  .  .  .  O  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:26:13--------------------------------
+A memory block has been leaked. The size is: 20
+
+This block was allocated by thread 0x46C, and the stack trace (return addresses) at the time was:
+4029DF [JclSysInfo][JclSysInfo][@GetMem]
+4048F9 [System][System][@NewAnsiString]
+404924 [System][System][@LStrFromPCharLen]
+43E92B [Controls][Controls][TControl.GetText]
+47B502 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+
+The block is currently used for an object of class: AnsiString
+
+The allocation number is: 789
+
+Current memory dump of 256 bytes starting at pointer address 7F967820:
+01 00 00 00 0A 00 00 00 45 3A 5C 32 35 36 2E 69 6D 67 00 00 11 8F 6E 8B 00 00 00 00 81 7E 96 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 13 03 00 00 DF 29 40 00 F9 48 40 00 24 49 40 00
+7A 03 43 00 07 05 43 00 E2 02 43 00 5F 06 43 00 D4 B4 47 00 B6 FE 43 00 75 84 43 00 69 85 43 00
+6C 04 00 00 6C 04 00 00 FF 29 40 00 45 48 40 00 4F 53 40 00 D9 52 40 00 33 3B 40 00 76 3A 40 00
+31 3E 40 00 BD 9A 47 00 E5 1F 42 00 EC 1D 42 00 88 DB 43 00 14 00 00 00 00 00 00 00 C1 8F 47 85
+94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 3E 70 B8 7A 00 00 00 00 81 79 96 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 47 03 00 00 DF 29 40 00 F9 48 40 00 24 49 40 00
+63 DC 45 00 2C C5 BE 77 DF 8D 8E 76 D9 8F 10 02 1C 90 10 02 F8 5E 8E 76 36 93 10 02 06 8E 40 00
+.  .  .  .  .  .  .  .  E  :  \  2  5  6  .  i  m  g  .  .  .    n  ‹  .  .  .  .    ~  –  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ß  )  @  .  ù  H  @  .  $  I  @  .
+z  .  C  .  .  .  C  .  â  .  C  .  _  .  C  .  Ô  ´  G  .  ¶  þ  C  .  u  „  C  .  i  …  C  .
+l  .  .  .  l  .  .  .  ÿ  )  @  .  E  H  @  .  O  S  @  .  Ù  R  @  .  3  ;  @  .  v  :  @  .
+1  >  @  .  ½  š  G  .  å  .  B  .  ì  .  B  .  ˆ  Û  C  .  .  .  .  .  .  .  .  .  Á    G  …
+”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  >  p  ¸  z  .  .  .  .    y  –  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  G  .  .  .  ß  )  @  .  ù  H  @  .  $  I  @  .
+c  Ü  E  .  ,  Å  ¾  w  ß    Ž  v  Ù    .  .  .    .  .  ø  ^  Ž  v  6  “  .  .  .  Ž  @  .
+
+--------------------------------2020/12/1 21:26:13--------------------------------
+FastMM has detected an error during a free block scan operation. The block footer has been corrupted. 
+
+The previous block size was: 32
+
+This block was previously allocated by thread 0x46C, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8C4 [utils.pas][utils][GetFileClusters][221]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The allocation number was: 792
+
+The block was previously freed by thread 0x46C, and the stack trace (return addresses) at the time was:
+402A40 [JclSysInfo][JclSysInfo][@ReallocMem]
+41C54C [Classes][Classes][TList.SetCapacity]
+41C2A1 [Classes][Classes][TList.Clear]
+41C24A [Classes][Classes][TList.Destroy]
+403AC3 [jpeg][jpeg][TObject.Free]
+445615 [Controls][Controls][TWinControl.FindNextControl]
+4593FC [Forms][Forms][TCustomForm.SetActive]
+459BE8 [Forms][Forms][TCustomForm.WMActivate]
+43FD1B [Controls][Controls][TControl.WndProc]
+76A6EEA5 [Unknown function at GetDesktopWindow]
+74CC2F08 [Unknown function at BufferedPaintUnInit]
+
+The current thread ID is 0x46C, and the stack trace (return addresses) leading to this error is:
+40B204 [FastMM4][FastMM4][CheckBlocksOnShutdown][11458]
+40BF9A [FastMM4][FastMM4][FinalizeMemoryManager][13020]
+40C00A [FastMM4][FastMM4][Finalization][13119]
+4044C8 [System][System][FinalizeUnits]
+47C0CD [C:\Users\erwan\Documents\-= SOURCES =-\delphi\system\extents-delphi\extents.dpr][extents][extents][16]
+76677C04 [BaseThreadInitThunk]
+77C0AD8F [Unknown function at RtlInitializeExceptionChain]
+77C0AD5A [Unknown function at RtlInitializeExceptionChain]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A6380:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF 00 00 08 00 00 00 00 00
+00 00 01 00 00 00 00 00 00 00 00 00 41 60 9A 7F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0C 02 00 00 DF 29 40 00 0A 45 42 00 51 46 42 00 97 58 42 00 0F 59 42 00 44 46 44 00 22 86 45 00
+1B FD 43 00 68 2C 44 00 2A 7B 45 00 5A 1E 44 00 6C 04 00 00 6C 04 00 00 FF 29 40 00 18 46 42 00
+94 57 42 00 C3 3A 40 00 EB 0F 44 00 11 60 45 00 F4 6B 45 00 28 4F 45 00 10 D0 40 00 5E 47 40 00
+CD C0 47 00 20 00 00 00 00 00 00 00 C2 6A 61 85 94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 3D 95 9E 7A 80 80 80 80 00 00 00 00 71 66 9A 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4F 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  A  `  š    .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  ß  )  @  .  .  E  B  .  Q  F  B  .  —  X  B  .  .  Y  B  .  D  F  D  .  "  †  E  .
+.  ý  C  .  h  ,  D  .  *  {  E  .  Z  .  D  .  l  .  .  .  l  .  .  .  ÿ  )  @  .  .  F  B  .
+”  W  B  .  Ã  :  @  .  ë  .  D  .  .  `  E  .  ô  k  E  .  (  O  E  .  .  Ð  @  .  ^  G  @  .
+Í  À  G  .     .  .  .  .  .  .  .  Â  j  a  …  ”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  =  •  ž  z  €  €  €  €  .  .  .  .  q  f  š  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  O  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:26:15--------------------------------
+A memory block has been leaked. The size is: 589668
+
+This block was allocated by thread 0x46C, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A8A9 [utils.pas][utils][GetFileClusters][220]
+47AE5A [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B50C [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 791
+
+Current memory dump of 256 bytes starting at pointer address 7F6B0090:
+01 00 00 00 00 00 01 00 FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00
+02 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00
+06 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00 08 00 00 00 00 00 00 00 09 00 00 00 00 00 00 00
+0A 00 00 00 00 00 00 00 0B 00 00 00 00 00 00 00 0C 00 00 00 00 00 00 00 0D 00 00 00 00 00 00 00
+0E 00 00 00 00 00 00 00 0F 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00 11 00 00 00 00 00 00 00
+12 00 00 00 00 00 00 00 13 00 00 00 00 00 00 00 14 00 00 00 00 00 00 00 15 00 00 00 00 00 00 00
+16 00 00 00 00 00 00 00 17 00 00 00 00 00 00 00 18 00 00 00 00 00 00 00 19 00 00 00 00 00 00 00
+1A 00 00 00 00 00 00 00 1B 00 00 00 00 00 00 00 1C 00 00 00 00 00 00 00 1D 00 00 00 00 00 00 00
+.  .  .  .  .  .  .  .  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  ÿ  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+
+--------------------------------2020/12/1 21:26:15--------------------------------
+This application has leaked memory. The small block leaks are (excluding expected leaks registered by pointer):
+
+13 - 20 bytes: AnsiString x 1
+
+The sizes of leaked medium and large blocks are (excluding expected leaks registered by pointer): 589668
+
+Note: Memory leak detail is logged to a text file in the same folder as this application. To disable this memory leak check, undefine "EnableMemoryLeakReporting".
+
+--------------------------------2020/12/1 21:56:34--------------------------------
+FastMM has detected an error during a FreeMem operation. The block footer has been corrupted. 
+
+The block size is: 32
+
+This block was allocated by thread 0x2128, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A877 [utils.pas][utils][GetFileClusters][226]
+77BF9868 [RtlDeleteBoundaryDescriptor]
+77C047A4 [RtlFreeUnicodeString]
+47AECE [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B580 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 791
+
+The block was previously freed by thread 0x2128, and the stack trace (return addresses) at the time was:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+404845 [System][System][@LStrClr]
+40493C [System][System][@LStrFromPCharLen]
+404D6C [System][System][@LStrCopy]
+4203DD [Classes][Classes][TReader.ReadProperty]
+41FE62 [Classes][Classes][TReader.ReadDataInner]
+41FA9B [Classes][Classes][SetCompName]
+41FE44 [Classes][Classes][TReader.ReadData]
+4221BA [Classes][Classes][TComponent.ReadState]
+41FCBC [Classes][Classes][TReader.ReadComponent]
+421031 [Classes][Classes][TReader.ReadValue]
+
+The current thread ID is 0x2128, and the stack trace (return addresses) leading to this error is:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+405B70 [System][System][@DynArrayClear]
+47B2FF [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][117]
+47B580 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+77C048AC [RtlAnsiStringToUnicodeString]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A7820:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 4C F6 69 00 00 00 00 00 08 00 40 01 00 00 00 00
+01 00 28 00 00 00 00 00 00 00 00 00 01 79 9A 7F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+22 03 00 00 DF 29 40 00 F9 48 40 00 8C 48 40 00 4B 4B 40 00 91 AF 47 00 80 B5 47 00 B6 FE 43 00
+75 84 43 00 69 85 43 00 1B FD 43 00 6A 1D BF 77 28 21 00 00 28 21 00 00 FF 29 40 00 6E 48 40 00
+F1 B2 47 00 80 B5 47 00 B6 FE 43 00 75 84 43 00 69 85 43 00 1B FD 43 00 6A 1D BF 77 7D 48 C0 77
+AC 48 C0 77 1B 00 00 00 00 00 00 00 D6 DB 57 63 94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 29 24 A8 9C 80 80 80 80 80 80 80 80 80 00 00 00 00 B1 79 9A 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 26 03 00 00 DF 29 40 00 F9 48 40 00 8C 48 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  L  ö  i  .  .  .  .  .  .  .  @  .  .  .  .  .
+.  .  (  .  .  .  .  .  .  .  .  .  .  y  š    .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+"  .  .  .  ß  )  @  .  ù  H  @  .  Œ  H  @  .  K  K  @  .  ‘  ¯  G  .  €  µ  G  .  ¶  þ  C  .
+u  „  C  .  i  …  C  .  .  ý  C  .  j  .  ¿  w  (  !  .  .  (  !  .  .  ÿ  )  @  .  n  H  @  .
+ñ  ²  G  .  €  µ  G  .  ¶  þ  C  .  u  „  C  .  i  …  C  .  .  ý  C  .  j  .  ¿  w  }  H  À  w
+¬  H  À  w  .  .  .  .  .  .  .  .  Ö  Û  W  c  ”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  )  $  ¨  œ  €  €  €  €  €  €  €  €  €  .  .  .  .  ±  y  š  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  &  .  .  .  ß  )  @  .  ù  H  @  .  Œ  H  @  .
+
+--------------------------------2020/12/1 21:56:42--------------------------------
+A memory block has been leaked. The size is: 36
+
+This block was allocated by thread 0x2128, and the stack trace (return addresses) at the time was:
+4029DF [JclSysInfo][JclSysInfo][@GetMem]
+4048F9 [System][System][@NewAnsiString]
+404924 [System][System][@LStrFromPCharLen]
+43E92B [Controls][Controls][TControl.GetText]
+47B576 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+43FD1B [Controls][Controls][TControl.WndProc]
+77BF1D6A [RtlFreeHeap]
+77C0487D [RtlAnsiStringToUnicodeString]
+
+The block is currently used for an object of class: AnsiString
+
+The allocation number is: 789
+
+Current memory dump of 256 bytes starting at pointer address 7F9A72A0:
+01 00 00 00 11 00 00 00 45 3A 5C 5F 69 6D 61 67 65 73 5C 77 37 2E 76 68 64 00 06 DD 6F 8B 80 80
+80 80 80 80 80 80 80 80 00 00 00 00 81 73 9A 7F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+D4 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00 52 4F 42 00 7E 1D 42 00 4F DA 43 00 59 0E 44 00
+10 33 43 00 F8 F9 41 00 29 FC 41 00 31 10 42 00 28 21 00 00 28 21 00 00 FF 29 40 00 7D 3A 40 00
+31 3E 40 00 BB 4F 42 00 C3 3A 40 00 74 DB 43 00 7D 3A 40 00 31 3E 40 00 9F 57 42 00 06 10 44 00
+D5 0F 44 00 24 00 00 00 1C 38 42 00 F9 19 85 85 94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 06 E6 7A 7A 00 00 00 00 31 74 9A 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D5 02 00 00 DF 29 40 00 5F 3A 40 00 E6 3D 40 00
+.  .  .  .  .  .  .  .  E  :  \  _  i  m  a  g  e  s  \  w  7  .  v  h  d  .  .  Ý  o  ‹  €  €
+€  €  €  €  €  €  €  €  .  .  .  .    s  š    .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+Ô  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .  R  O  B  .  ~  .  B  .  O  Ú  C  .  Y  .  D  .
+.  3  C  .  ø  ù  A  .  )  ü  A  .  1  .  B  .  (  !  .  .  (  !  .  .  ÿ  )  @  .  }  :  @  .
+1  >  @  .  »  O  B  .  Ã  :  @  .  t  Û  C  .  }  :  @  .  1  >  @  .  Ÿ  W  B  .  .  .  D  .
+Õ  .  D  .  $  .  .  .  .  8  B  .  ù  .  …  …  ”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  €  .  æ  z  z  .  .  .  .  1  t  š  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Õ  .  .  .  ß  )  @  .  _  :  @  .  æ  =  @  .
+
+--------------------------------2020/12/1 21:56:42--------------------------------
+FastMM has detected an error during a free block scan operation. The block footer has been corrupted. 
+
+The previous block size was: 32
+
+This block was previously allocated by thread 0x2128, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A877 [utils.pas][utils][GetFileClusters][226]
+77BF9868 [RtlDeleteBoundaryDescriptor]
+77C047A4 [RtlFreeUnicodeString]
+47AECE [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B580 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+
+The allocation number was: 791
+
+The block was previously freed by thread 0x2128, and the stack trace (return addresses) at the time was:
+4029FF [JclSysInfo][JclSysInfo][@FreeMem]
+404845 [System][System][@LStrClr]
+40493C [System][System][@LStrFromPCharLen]
+404D6C [System][System][@LStrCopy]
+4203DD [Classes][Classes][TReader.ReadProperty]
+41FE62 [Classes][Classes][TReader.ReadDataInner]
+41FA9B [Classes][Classes][SetCompName]
+41FE44 [Classes][Classes][TReader.ReadData]
+4221BA [Classes][Classes][TComponent.ReadState]
+41FCBC [Classes][Classes][TReader.ReadComponent]
+421031 [Classes][Classes][TReader.ReadValue]
+
+The current thread ID is 0x2128, and the stack trace (return addresses) leading to this error is:
+40B204 [FastMM4][FastMM4][CheckBlocksOnShutdown][11458]
+40BF9A [FastMM4][FastMM4][FinalizeMemoryManager][13020]
+40C00A [FastMM4][FastMM4][Finalization][13119]
+4044C8 [System][System][FinalizeUnits]
+47C141 [C:\Users\erwan\Documents\-= SOURCES =-\delphi\system\extents-delphi\extents.dpr][extents][extents][16]
+76677C04 [BaseThreadInitThunk]
+77C0AD8F [Unknown function at RtlInitializeExceptionChain]
+77C0AD5A [Unknown function at RtlInitializeExceptionChain]
+
+Current memory dump of 256 bytes starting at pointer address 7F9A7820:
+00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 4C F6 69 00 00 00 00 00 08 00 40 01 00 00 00 00
+01 00 28 00 00 00 00 00 00 00 00 00 01 79 9A 7F 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+22 03 00 00 DF 29 40 00 F9 48 40 00 8C 48 40 00 4B 4B 40 00 91 AF 47 00 80 B5 47 00 B6 FE 43 00
+75 84 43 00 69 85 43 00 1B FD 43 00 6A 1D BF 77 28 21 00 00 28 21 00 00 FF 29 40 00 6E 48 40 00
+F1 B2 47 00 80 B5 47 00 B6 FE 43 00 75 84 43 00 69 85 43 00 1B FD 43 00 6A 1D BF 77 7D 48 C0 77
+AC 48 C0 77 1B 00 00 00 00 00 00 00 D6 DB 57 63 94 4C 48 00 80 80 80 80 80 80 80 80 80 80 80 80
+80 80 80 80 80 80 80 80 80 80 80 29 24 A8 9C 80 80 80 80 80 80 80 80 80 00 00 00 00 B1 79 9A 7F
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 26 03 00 00 DF 29 40 00 F9 48 40 00 8C 48 40 00
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  L  ö  i  .  .  .  .  .  .  .  @  .  .  .  .  .
+.  .  (  .  .  .  .  .  .  .  .  .  .  y  š    .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+"  .  .  .  ß  )  @  .  ù  H  @  .  Œ  H  @  .  K  K  @  .  ‘  ¯  G  .  €  µ  G  .  ¶  þ  C  .
+u  „  C  .  i  …  C  .  .  ý  C  .  j  .  ¿  w  (  !  .  .  (  !  .  .  ÿ  )  @  .  n  H  @  .
+ñ  ²  G  .  €  µ  G  .  ¶  þ  C  .  u  „  C  .  i  …  C  .  .  ý  C  .  j  .  ¿  w  }  H  À  w
+¬  H  À  w  .  .  .  .  .  .  .  .  Ö  Û  W  c  ”  L  H  .  €  €  €  €  €  €  €  €  €  €  €  €
+€  €  €  €  €  €  €  €  €  €  €  )  $  ¨  œ  €  €  €  €  €  €  €  €  €  .  .  .  .  ±  y  š  
+.  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  &  .  .  .  ß  )  @  .  ù  H  @  .  Œ  H  @  .
+
+--------------------------------2020/12/1 21:56:43--------------------------------
+A memory block has been leaked. The size is: 21036900
+
+This block was allocated by thread 0x2128, and the stack trace (return addresses) at the time was:
+402A59 [JclSysInfo][JclSysInfo][@ReallocMem]
+405A60 [System][System][DynArraySetLength]
+405B36 [System][System][@DynArraySetLength]
+47A927 [utils.pas][utils][GetFileClusters][237]
+77BF9868 [RtlDeleteBoundaryDescriptor]
+77C047A4 [RtlFreeUnicodeString]
+47AECE [ufrmExtents.pas][ufrmExtents][TfrmExtents.get_details][77]
+47B580 [ufrmExtents.pas][ufrmExtents][TfrmExtents.btnOpenClick][155]
+43FEB6 [Controls][Controls][TControl.Click]
+438475 [StdCtrls][StdCtrls][TButton.Click]
+438569 [StdCtrls][StdCtrls][TButton.CNCommand]
+
+The block is currently used for an object of class: Unknown
+
+The allocation number is: 792
+
+Current memory dump of 256 bytes starting at pointer address 7E440090:
+01 00 00 00 01 00 28 00 4C F6 69 00 00 00 00 00 4D F6 69 00 00 00 00 00 4E F6 69 00 00 00 00 00
+4F F6 69 00 00 00 00 00 50 F6 69 00 00 00 00 00 51 F6 69 00 00 00 00 00 52 F6 69 00 00 00 00 00
+53 F6 69 00 00 00 00 00 54 F6 69 00 00 00 00 00 55 F6 69 00 00 00 00 00 56 F6 69 00 00 00 00 00
+57 F6 69 00 00 00 00 00 58 F6 69 00 00 00 00 00 59 F6 69 00 00 00 00 00 5A F6 69 00 00 00 00 00
+5B F6 69 00 00 00 00 00 5C F6 69 00 00 00 00 00 5D F6 69 00 00 00 00 00 5E F6 69 00 00 00 00 00
+5F F6 69 00 00 00 00 00 60 F6 69 00 00 00 00 00 61 F6 69 00 00 00 00 00 62 F6 69 00 00 00 00 00
+63 F6 69 00 00 00 00 00 64 F6 69 00 00 00 00 00 65 F6 69 00 00 00 00 00 66 F6 69 00 00 00 00 00
+67 F6 69 00 00 00 00 00 68 F6 69 00 00 00 00 00 69 F6 69 00 00 00 00 00 6A F6 69 00 00 00 00 00
+.  .  .  .  .  .  (  .  L  ö  i  .  .  .  .  .  M  ö  i  .  .  .  .  .  N  ö  i  .  .  .  .  .
+O  ö  i  .  .  .  .  .  P  ö  i  .  .  .  .  .  Q  ö  i  .  .  .  .  .  R  ö  i  .  .  .  .  .
+S  ö  i  .  .  .  .  .  T  ö  i  .  .  .  .  .  U  ö  i  .  .  .  .  .  V  ö  i  .  .  .  .  .
+W  ö  i  .  .  .  .  .  X  ö  i  .  .  .  .  .  Y  ö  i  .  .  .  .  .  Z  ö  i  .  .  .  .  .
+[  ö  i  .  .  .  .  .  \  ö  i  .  .  .  .  .  ]  ö  i  .  .  .  .  .  ^  ö  i  .  .  .  .  .
+_  ö  i  .  .  .  .  .  `  ö  i  .  .  .  .  .  a  ö  i  .  .  .  .  .  b  ö  i  .  .  .  .  .
+c  ö  i  .  .  .  .  .  d  ö  i  .  .  .  .  .  e  ö  i  .  .  .  .  .  f  ö  i  .  .  .  .  .
+g  ö  i  .  .  .  .  .  h  ö  i  .  .  .  .  .  i  ö  i  .  .  .  .  .  j  ö  i  .  .  .  .  .
+
+--------------------------------2020/12/1 21:56:43--------------------------------
+This application has leaked memory. The small block leaks are (excluding expected leaks registered by pointer):
+
+21 - 36 bytes: AnsiString x 1
+
+The sizes of leaked medium and large blocks are (excluding expected leaks registered by pointer): 21036900
+
+Note: Memory leak detail is logged to a text file in the same folder as this application. To disable this memory leak check, undefine "EnableMemoryLeakReporting".

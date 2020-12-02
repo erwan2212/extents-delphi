@@ -46,6 +46,7 @@ PVOLUME_PHYSICAL_OFFSETS=VOLUME_PHYSICAL_OFFSETS;
   end;
 
   TExtent_ = record
+    StartingVcn: LARGE_INTEGER;
     NextVcn: LARGE_INTEGER;
     LCN:LARGE_INTEGER;
     sectors:ULONG;
@@ -58,6 +59,7 @@ PVOLUME_PHYSICAL_OFFSETS=VOLUME_PHYSICAL_OFFSETS;
     Extents: array[0..0] of Extent;
   end;
   PRETRIEVAL_POINTERS_BUFFER = ^RETRIEVAL_POINTERS_BUFFER;
+  RETRIEVAL_POINTERS_BUFFERS=array of RETRIEVAL_POINTERS_BUFFER;
 
 type
   _STORAGE_DEVICE_NUMBER = record
@@ -170,7 +172,11 @@ begin
  CloseHandle(volumeHandle);
 end;
 
-function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
+//A cluster is a group of disk sectors that are allocated as a unit
+//An extent means a contiguous range of clusters somewhere on the disk,
+//described by a starting cluster number and a length (how many clusters after the starting one)
+
+function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:textents_ ): TClusters;
 var
   hFile: THandle;
   OutSize: ULONG;
@@ -179,6 +185,7 @@ var
   PrevVCN, lcn: LARGE_INTEGER;
   InBuf: STARTING_VCN_INPUT_BUFFER;
   OutBuf: PRETRIEVAL_POINTERS_BUFFER;
+  x,errcode :longint;
 begin
   //Clusters := nil;
   hFile := CreateFile(pchar(lpFileName), generic_read,
@@ -206,52 +213,64 @@ begin
     //FileSize := GetFileSize(hFile, nil);
     Int64Rec(FileSize).Lo := GetFileSize(hFile, @Int64Rec(FileSize).Hi);
     OutSize := SizeOf(RETRIEVAL_POINTERS_BUFFER) + (FileSize div ClusterSize) * SizeOf(OutBuf^.Extents);
-    GetMem(OutBuf, OutSize);
+
+    outbuf:=AllocMem(sizeof(RETRIEVAL_POINTERS_BUFFER));
+
+    bytes:=0;
 
     InBuf.StartingVcn.QuadPart := 0;
 
-    if (DeviceIoControl(hFile, FSCTL_GET_RETRIEVAL_POINTERS, @InBuf,
-      SizeOf(InBuf), OutBuf, OutSize, Bytes, nil)) then
-    begin
+    //lets get the extents
+    repeat
+    DeviceIoControl(hFile, FSCTL_GET_RETRIEVAL_POINTERS, @InBuf, SizeOf(InBuf), OutBuf, sizeof(RETRIEVAL_POINTERS_BUFFER), Bytes, nil);
+    errcode := GetLastError;
+              x := 0;
+              while x < OutBuf^.ExtentCount do
+                begin
+                  //inc(total);
+                  inc(x);
+                  setlength(extents_ ,length(extents_ )+1);
+                  extents_ [high(extents_ )].StartingVcn:=OutBuf^.StartingVcn ;
+                  extents_ [high(extents_ )].NextVcn :=OutBuf^.Extents[X-1].NextVCN;
+                  extents_ [high(extents_ )].LCN :=OutBuf^.Extents[X-1].LCN;
+                end;
+    InBuf.StartingVCN.QuadPart := OutBuf^.Extents[X-1].NextVCN.QuadPart;
+    until errcode <> ERROR_MORE_DATA;
+
+    PrevVCN.QuadPart :=0;
+
       ClCount^ := (FileSize + ClusterSize - 1) div ClusterSize;
 
       SetLength(Clusters, ClCount^);
-      SetLength(Extents_, OutBuf^.ExtentCount);
 
-      PrevVCN := OutBuf^.StartingVcn;
+
       //dolog('ExtentCount:'+inttostr(OutBuf^.ExtentCount));
       //dolog('StartingVcn:'+inttohex(OutBuf^.StartingVcn.QuadPart ,8));
       Cls := 0;
       r := 0;
-      extents_ [r].NextVcn.quadpart :=0;
-      while (r < OutBuf^.ExtentCount) do
+      //lets go thru extents
+      while (r < length(extents_ )) do
       begin
-        Lcn := OutBuf^.Extents[r].Lcn;
-        CnCount := ULONG(OutBuf^.Extents[r].NextVcn.QuadPart - PrevVCN.QuadPart);
+        //This value minus either StartingVcn (for the first Extents array member)
+        //or the NextVcn of the previous member of the array (for all other Extents array members)
+        //is the length, in clusters, of the current extent
+        CnCount := ULONG(Extents_[r].NextVcn.QuadPart - Extents_[r].StartingVcn.QuadPart  );
 
+        Lcn.QuadPart:=extents_ [r].lcn.QuadPart;
         sectors:=0;
+        //lets populate clusters
         while (CnCount > 0) do
         begin
-          if extents_ [r].LCN.QuadPart =0 then extents_ [r].LCN:=Lcn;
-          Clusters[Cls] := Lcn.QuadPart;
+
+          Clusters[Cls] := lcn.QuadPart;
           Dec(CnCount);
           Inc(Cls);inc(sectors);
           Inc(Lcn.QuadPart);
-        end;
-
-        extents_ [r].sectors :=sectors*ClusterSize div BtPerSec;
-
-        //if r<OutBuf^.ExtentCount -1 then
-        begin
-        //dolog('NextVcn:'+inttohex(OutBuf^.Extents[r].NextVcn.lowpart  ,4)+inttohex(OutBuf^.Extents[r].NextVcn.highpart  ,4));
-        extents_ [r+1].NextVcn :=OutBuf^.Extents[r].NextVcn;
-        end;
-
-        PrevVCN := OutBuf^.Extents[r].NextVcn;
-
+        end;//while
+        Extents_[r].sectors :=sectors*ClusterSize div BtPerSec;
         Inc(r);
-      end;
-    end;
+      end;//while
+
     FreeMem(OutBuf);
     CloseHandle(hFile);
   end else raise exception.Create('invalid handle, '+inttostr(getlasterror));

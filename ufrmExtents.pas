@@ -45,7 +45,7 @@ implementation
 procedure dolog(msg:string);
 begin
 if console=true
- then writeln(msg)
+ then {$i-}writeln(msg){$i+}
  else frmExtents.Memo.Lines.Add(msg);
 end;
 
@@ -113,10 +113,13 @@ end;
   if 1=1 then
   begin
   sector:=0;lba:=0;
+  i:=0;
   for i:=low(extents_) to high(extents_)  do
+  //if 1=1 then
   begin
-  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  if strpas(FSName)='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
+
   dolog('extents_['+inttostr(i)+'] - '
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
     +' VCN : '+inttostr(extents_[i].NextVcn.QuadPart )
@@ -124,6 +127,7 @@ end;
     //+' Lba : 0x'+inttohex(lba div BtPerSec,8)
     +' Lba : '+inttostr(lba div BtPerSec)
     +' Sectors : '+inttostr(extents_[i].sectors ));
+  
   end;
   end;
   //**********
@@ -167,11 +171,11 @@ hDrive, hFile: THandle;
 Offset: LARGE_INTEGER;
 Bytes: ULONG; 
 begin
-
+try
 lpSrcName :=pchar(source );
 
 lpDstName :=pchar(destination );;
-{$i-}deletefile(lpDstName );{$i+}
+{$i-}deletefile(strpas(lpDstName) );{$i+}
 //lets get the cluster size
 Name[0] := lpSrcName[0];
   Name[1] := ':';
@@ -181,7 +185,11 @@ Name[0] := lpSrcName[0];
   GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
-Clusters := GetFileClusters(lpSrcName, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
+try
+Clusters := GetFileClusters(strpas(lpSrcName), ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
+except
+on e:exception do dolog(e.Message );
+end;
 //
 FullSize := FileSize;
 
@@ -238,9 +246,13 @@ FullSize := FileSize;
       end;
       CloseHandle(hDrive);
     end;
-    Clusters := nil;
+    //Clusters := nil;
   end;
-//    
+//
+except
+on e:exception do showmessage(e.Message );
+end;
+
 end;
 
 procedure TfrmExtents.btnDumpClick(Sender: TObject);

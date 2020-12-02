@@ -45,7 +45,7 @@ object frmExtents: TfrmExtents
     Left = 30
     Top = 438
     Width = 562
-    Height = 21
+    Height = 24
     ReadOnly = True
     TabOrder = 2
   end
