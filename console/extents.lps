@@ -8,8 +8,9 @@
       <Unit0>
         <Filename Value="extents.dpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="215"/>
-        <CursorPos X="29" Y="225"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="186"/>
+        <CursorPos X="15" Y="204"/>
         <UsageCount Value="171"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -17,9 +18,8 @@
       <Unit1>
         <Filename Value="..\utils.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="130"/>
+        <TopLine Value="86"/>
         <CursorPos X="38" Y="143"/>
         <UsageCount Value="171"/>
         <Loaded Value="True"/>

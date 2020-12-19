@@ -195,13 +195,13 @@ end;
   begin
   if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
-  dolog('extents_['+inttostr(i)+'] - '
+  dolog('#:'+inttostr(i)+#9
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
-    +' VCN : '+inttostr(extents_[i].NextVcn.QuadPart )
-    +' LCN : '+inttostr(extents_[i].LCN.QuadPart )
+    +'VCN:'+inttostr(extents_[i].NextVcn.QuadPart )+#9
+    +'LCN:'+inttostr(extents_[i].LCN.QuadPart )+#9
     //+' Lba : 0x'+inttohex(lba div BtPerSec,8)
-    +' Lba : '+inttostr(lba div BtPerSec)
-    +' Sectors : '+inttostr(extents_[i].sectors ));
+    +'Lba:'+inttostr(lba div BtPerSec)+#9
+    +'Clusters:'+inttostr(extents_[i].sectors div SecPerCl));
   end;
   end;
   //**********
