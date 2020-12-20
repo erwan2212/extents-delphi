@@ -14,8 +14,13 @@ i64:int64;
 
 procedure dolog(msg:string);
 begin
+try
 writeln(msg)
+except
+on e:exception do writeln(e.message);
 end;
+end;
+
 
 procedure backup(source,destination:string);
 var
@@ -168,11 +173,13 @@ if length(clusters)<=0 then
   dolog('no clusters found...');
   exit;
   end;
+//fillchar(fsname,MAX_PATH ,0);
+//fillchar(VolName,MAX_PATH ,0);
 if GetVolumeInformationA(PansiChar(copy(filename,1,3)), @VolName[0], MAX_PATH, nil,
                        maxCmp, FSSysFlags, @FSName[0], MAX_PATH)=true then
 begin
 lba:=0;
-dolog('Filesystem :'+strpas(FSName));
+dolog('Filesystem :'+string(strpas(@FSName[0])));
 //Send the first extent's LCN to translation to physical offset from the beginning of the disk
 //if FSName='NTFS' then lba:=TranslateLogicalToPhysical(lpSrcName,clusters[0] * (SecPerCl * BtPerSec));
 end;

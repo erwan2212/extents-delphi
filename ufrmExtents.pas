@@ -18,21 +18,24 @@ type
     SaveDialog1: TSaveDialog;
     ProgressBar: TProgressBar;
     JvOpenDialog1: TJvOpenDialog;
+    Button1: TButton;
     procedure btnOpenClick(Sender: TObject);
     procedure btnDumpClick(Sender: TObject);
     procedure JvOpenDialog1ShareViolation(Sender: TObject;
       var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure MemoDblClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     procedure get_details(filename:string);
-    procedure backup(source,destination:string);
+    procedure backup(source,destination:string;const altclusters:tclusters=(0));
   public
     { Public declarations }
   end;
 
-
+const
+emptyclusters:tclusters=(0);
 
 var
   frmExtents: TfrmExtents;
@@ -48,6 +51,26 @@ if console=true
  then {$i-}writeln(msg){$i+}
  else frmExtents.Memo.Lines.Add(msg);
 end;
+
+function getfilesize2(filename:string):int64;
+var
+fad:WIN32_FILE_ATTRIBUTE_DATA;
+filesize:int64;
+fd:TWin32FindData;
+hfile:thandle;
+begin
+result:=0;
+hFile := FindFirstFile(pchar(filename) , fd);
+if hfile<>thandle(-1) then
+  begin
+      filesize := fd.nFileSizeHigh;
+      filesize := filesize shl 32;
+      filesize := filesize + fd.nFileSizeLow;
+      result:=filesize;
+      try windows.findclose(hfile);except end;
+  end;
+end;
+
 
 
 procedure TfrmExtents.get_details(filename:string);
@@ -157,7 +180,7 @@ end;
 
 
 
-procedure TfrmExtents.backup(source,destination:string);
+procedure TfrmExtents.backup(source,destination:string;const altclusters:tclusters=(0));
 var
 lpDstName,lpSrcName:pchar;
 Clusters: TClusters;
@@ -185,10 +208,19 @@ Name[0] := lpSrcName[0];
   GetDiskFreeSpace(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
 //
-try
-Clusters := GetFileClusters(strpas(lpSrcName), ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
-except
-on e:exception do dolog(e.Message );
+if length(altclusters)>0 then
+begin
+  clcount:=length(altclusters );
+  filesize:=getfilesize2(source);
+  clusters:=altclusters ; 
+end
+else
+  begin
+  try
+  Clusters := GetFileClusters(strpas(lpSrcName), ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
+  except
+  on e:exception do dolog(e.Message );
+  end;
 end;
 //
 FullSize := FileSize;
@@ -211,8 +243,8 @@ FullSize := FileSize;
 
       if (hFile <> INVALID_HANDLE_VALUE) then
       begin
-        GetMem(Buff, ClusterSize);
-
+        //GetMem(Buff, ClusterSize); //allocmem would create a zerofilled buffer
+        buff:=allocmem(ClusterSize );
         r := 0;
         CopyedSize := 0;
         while (r < ClCount) do
@@ -223,7 +255,7 @@ FullSize := FileSize;
 
           SetFilePointer(hDrive, Offset.LowPart, @Offset.HighPart, FILE_BEGIN);
 
-          ReadFile(hDrive, Buff^, ClusterSize, Bytes, nil);
+          if not ReadFile(hDrive, Buff^, ClusterSize, Bytes, nil) then break;
 
           BlockSize := Min(FileSize, ClusterSize);
 
@@ -317,7 +349,7 @@ if (paramstr(1)='-details') and (paramcount=2) then
 
 if (paramstr(1)='-backup') and (paramcount=3) then
   begin
-  backup (paramstr(2),paramstr(3)); 
+  backup (paramstr(2),paramstr(3));
   end;
 
 if console=true then
@@ -335,6 +367,55 @@ end;
 procedure TfrmExtents.MemoDblClick(Sender: TObject);
 begin
 memo.Clear ;
+end;
+
+
+//little experiment to read a file locked by the system
+procedure TfrmExtents.Button1Click(Sender: TObject);
+var
+clcount,filesize,ClusterSize:int64;
+i:ulong;
+hfile:thandle;
+clusters:tclusters;
+SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
+fad:WIN32_FILE_ATTRIBUTE_DATA;
+size:LARGE_INTEGER ;
+fd:TWin32FindData;
+begin
+hfile:=thandle(-1);
+clcount:=0;
+//
+GetDiskFreeSpaceA(pchar('c:\'), SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
+ClusterSize := SecPerCl * BtPerSec;
+//
+{
+if GetFileAttributesEx(pchar('c:\swapfile.sys'),GetFileExInfoStandard,@fad) then
+  begin
+  size.LowPart :=fad.nFileSizeLow ;
+  size.HighPart :=fad.nFileSizeHigh ;
+  filesize :=size.QuadPart ;
+  end;
+}
+{
+hFile := CreateFile(pchar('c:\swapfile.sys'), 0, 0, nil, OPEN_EXISTING, 0, 0);
+if hfile<>thandle(-1) then
+  begin
+  Int64Rec(FileSize).Lo := GetFileSize(hFile, @Int64Rec(FileSize).Hi);
+  closehandle(hfile);
+  end;
+}
+//the below retrieves filesize from the mft - no need for createfile...
+Filesize := getfilesize2(pchar('c:\swapfile.sys'));
+//
+//particular case here :
+//datarun gave us one cluster only (0x10000) i.e file is contiguous
+//therefore we will fill the cluster array ourself
+ClCount := (FileSize + ClusterSize - 1) div ClusterSize;
+SetLength(Clusters, ClCount);
+clusters[0]:=$10000;
+for i:=1 to clcount -1 do clusters[i]:=clusters[i-1]+ClusterSize ;
+//
+backup('c:\swapfile.sys','c:\test.dmp',clusters);
 end;
 
 end.

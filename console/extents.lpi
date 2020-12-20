@@ -102,7 +102,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="c:\bootmgr"/>
+        <CommandLineParams Value="e:\_images\data0.vmdk"/>
       </local>
     </RunParams>
     <Units Count="2">

@@ -91,14 +91,9 @@ sdn:_STORAGE_DEVICE_NUMBER;
 begin
 
     volumeHandle:=thandle(-1);
-    volumeHandle := CreateFile(
-		pchar('\\.\'+copy(filename,1,2)),
-		0 {GENERIC_READ or GENERIC_WRITE},
-		FILE_SHARE_READ or FILE_SHARE_WRITE,
-		nil,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		0);
+    volumeHandle := CreateFile(pchar('\\.\'+copy(filename,1,2)), 0 {GENERIC_READ or GENERIC_WRITE},
+  	                                FILE_SHARE_READ or FILE_SHARE_WRITE, nil,	OPEN_EXISTING,
+                                    FILE_ATTRIBUTE_NORMAL, 0);
 
     if volumeHandle=thandle(-1) then exit;
 
@@ -110,15 +105,9 @@ begin
    physicalOffset.Offset   := PhysicalOffset_; //inLcn.QuadPart * clusterSizeInBytes;
 
 
-		if DeviceIoControl(
-			volumeHandle,
-			IOCTL_VOLUME_PHYSICAL_TO_LOGICAL ,
-			@physicalOffset,
-			sizeof(VOLUME_PHYSICAL_OFFSET),
-			@logicalOffset,
-			sizeof(logicalOffset),
-			bytesReturned,
-			nil) then
+		if DeviceIoControl(volumeHandle, IOCTL_VOLUME_PHYSICAL_TO_LOGICAL, @physicalOffset,
+                       sizeof(VOLUME_PHYSICAL_OFFSET), @logicalOffset, sizeof(logicalOffset),
+                       bytesReturned,	nil) then
     begin
     result:=logicalOffset.LogicalOffset;
     //div 512 (BytesPerSector) = lba
@@ -141,26 +130,15 @@ begin
    logicalOffset.LogicalOffset := LogicalOffset_; //inLcn.QuadPart * clusterSizeInBytes;
 
     volumeHandle:=thandle(-1);
-    volumeHandle := CreateFile(
-		pchar('\\.\'+copy(filename,1,2)),
-		0 {GENERIC_READ or GENERIC_WRITE},
-		FILE_SHARE_READ or FILE_SHARE_WRITE,
-		nil,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		0);
+    volumeHandle :=
+    CreateFile(pchar('\\.\'+copy(filename,1,2)),0 {GENERIC_READ or GENERIC_WRITE},
+               FILE_SHARE_READ or FILE_SHARE_WRITE, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
     if volumeHandle=thandle(-1) then exit;
 
-		if DeviceIoControl(
-			volumeHandle,
-			IOCTL_VOLUME_LOGICAL_TO_PHYSICAL,
-			@logicalOffset,
-			sizeof(VOLUME_LOGICAL_OFFSET),
-			@physicalOffsets,
-			sizeof(VOLUME_PHYSICAL_OFFSETS),
-			bytesReturned,
-			nil) then
+		if DeviceIoControl(volumeHandle, IOCTL_VOLUME_LOGICAL_TO_PHYSICAL, @logicalOffset,
+                      sizeof(VOLUME_LOGICAL_OFFSET), @physicalOffsets, sizeof(VOLUME_PHYSICAL_OFFSETS),
+                      bytesReturned, nil) then
     begin
     result:=physicalOffsets.PhysicalOffset[0].Offset  ;
     //div 512 (BytesPerSector) = lba
@@ -179,40 +157,27 @@ end;
 function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:textents_ ): TClusters;
 var
   hFile: THandle;
-  OutSize: ULONG;
   Bytes, Cls, CnCount, r,sectors: ULONG;
   Clusters: TClusters;
-  PrevVCN, lcn: LARGE_INTEGER;
+  lcn: LARGE_INTEGER;
   InBuf: STARTING_VCN_INPUT_BUFFER;
   OutBuf: PRETRIEVAL_POINTERS_BUFFER;
   x,errcode :longint;
 begin
-  //Clusters := nil;
-  hFile := CreateFile(pchar(lpFileName), generic_read,
-    FILE_SHARE_READ ,
-    nil, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
+  hFile := CreateFile(pchar(lpFileName), generic_read, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
 
-    if( hFile = INVALID_HANDLE_VALUE ) then
-    // try again wit other flags
-    hFile := CreateFile(pchar(lpFileName),
-        FILE_READ_ATTRIBUTES,
-        FILE_SHARE_READ,
-        nil, OPEN_EXISTING,
-        FILE_FLAG_NO_BUFFERING, 0);
+  // try again wit other flags
+  if( hFile = INVALID_HANDLE_VALUE )
+  then hFile := CreateFile(pchar(lpFileName), FILE_READ_ATTRIBUTES, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
 
+  // try again as directory
+  if( hFile = INVALID_HANDLE_VALUE )
+  then hFile := CreateFile(pchar(lpFileName), GENERIC_READ, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
 
-    if( hFile = INVALID_HANDLE_VALUE ) then
-    // try again as directory
-    hFile := CreateFile(pchar(lpFileName),
-            GENERIC_READ,
-            FILE_SHARE_READ,
-            nil, OPEN_EXISTING,
-            FILE_FLAG_BACKUP_SEMANTICS, 0);
   if (hFile <> INVALID_HANDLE_VALUE) then
   begin
     //FileSize := GetFileSize(hFile, nil);
     Int64Rec(FileSize).Lo := GetFileSize(hFile, @Int64Rec(FileSize).Hi);
-    OutSize := SizeOf(RETRIEVAL_POINTERS_BUFFER) + (FileSize div ClusterSize) * SizeOf(OutBuf^.Extents);
 
     outbuf:=AllocMem(sizeof(RETRIEVAL_POINTERS_BUFFER));
 
@@ -237,13 +202,11 @@ begin
     InBuf.StartingVCN.QuadPart := OutBuf^.Extents[X-1].NextVCN.QuadPart;
     until errcode <> ERROR_MORE_DATA;
 
-    PrevVCN.QuadPart :=0;
+    FreeMem(OutBuf);
+    CloseHandle(hFile);
 
-      ClCount^ := (FileSize + ClusterSize - 1) div ClusterSize;
-
-      SetLength(Clusters, ClCount^);
-
-
+    ClCount^ := (FileSize + ClusterSize - 1) div ClusterSize;
+    SetLength(Clusters, ClCount^);
       //dolog('ExtentCount:'+inttostr(OutBuf^.ExtentCount));
       //dolog('StartingVcn:'+inttohex(OutBuf^.StartingVcn.QuadPart ,8));
       Cls := 0;
@@ -271,8 +234,6 @@ begin
         Inc(r);
       end;//while
 
-    FreeMem(OutBuf);
-    CloseHandle(hFile);
   end else raise exception.Create('invalid handle, '+inttostr(getlasterror));
   Result := Clusters;
 end;

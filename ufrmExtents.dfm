@@ -1,8 +1,8 @@
 object frmExtents: TfrmExtents
   Left = 307
   Top = 201
-  Width = 799
-  Height = 568
+  Width = 727
+  Height = 576
   Caption = 'Dump Extents by Erwan2212@gmail.com'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -64,6 +64,16 @@ object frmExtents: TfrmExtents
     Width = 562
     Height = 21
     TabOrder = 4
+  end
+  object Button1: TButton
+    Left = 600
+    Top = 512
+    Width = 75
+    Height = 25
+    Caption = 'TEST'
+    TabOrder = 5
+    Visible = False
+    OnClick = Button1Click
   end
   object SaveDialog1: TSaveDialog
     Left = 136
