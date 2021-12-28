@@ -81,9 +81,16 @@ FileSize, ClusterSize:int64;
 ClCount,i,sector: ULONG;
 Name: array[0..2] of ansiChar;
 SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
-lba:int64;
+lba,delta:int64;
 FSName,VolName:array[0..255] of ansichar;
 FSSysFlags,maxCmp   : DWord;
+//
+hdevice:thandle;
+info:PARTITION_INFORMATION_EX;
+ret:boolean;
+buffer:pointer;
+bytesread:cardinal;
+bs:tboot_sequence;                
 begin
 
 
@@ -95,6 +102,31 @@ Name[0] := filename[1];
   NumOfClusters := 0;
   GetDiskFreeSpaceA(Name, SecPerCl, BtPerSec, FreeClusters, NumOfClusters);
   ClusterSize := SecPerCl * BtPerSec;
+//
+hdevice:=thandle(-1);
+hDevice := CreateFile( pchar('\\.\'+copy(filename,1,2)), GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE,nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  if GetPartitionInfo(hDevice ,info)=true then
+   begin
+   dolog('PartitionNumber: '+inttostr(info.PartitionNumber ));
+   dolog('StartingOffset: '+inttostr(info.StartingOffset.QuadPart));
+   end;
+
+if FSName <>'NTFS' then
+    begin
+    buffer:=allocmem(512);
+    bytesread:=0;
+    fillchar(bs,sizeof(bs),0);
+    ret:=ReadFile (hdevice, buffer^, 512, bytesread, nil);
+    delta:=0;
+    if bytesread>0 then
+      begin
+      copymemory(@bs,buffer,512);
+      delta:=(bs.wSectorsReservedAtBegin*bs.wBytesPerSector)+(bs.NumberOfFATs *bs.BigSectorsPerFAT*bs.wBytesPerSector);
+      //writeln(delta);
+      end;
+    freemem(buffer);
+    end;
+if hdevice>0 then closehandle(hdevice);
 //
 try
 Clusters := GetFileClusters(filename, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
@@ -141,15 +173,15 @@ end;
   //if 1=1 then
   begin
   if strpas(FSName)='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  if FSName<>'NTFS' then lba:=delta + (extents_[i].LCN.QuadPart * int64(SecPerCl * BtPerSec)) + int64(info.StartingOffset.QuadPart);
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
 
   dolog('extents_['+inttostr(i)+'] - '
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
     +' VCN : '+inttostr(extents_[i].NextVcn.QuadPart )
     +' LCN : '+inttostr(extents_[i].LCN.QuadPart )
-    //+' Lba : 0x'+inttohex(lba div BtPerSec,8)
-    +' Lba : '+inttostr(lba div BtPerSec)
-    +' Sectors : '+inttostr(extents_[i].sectors ));
+    +' Size(Sectors) : '+inttostr(extents_[i].sectors )
+    +' Lba : '+inttostr(lba div BtPerSec));
   
   end;
   end;

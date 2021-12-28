@@ -163,7 +163,7 @@ dolog('***************************');
 dolog('Bytes Per Sector:'+inttostr(BtPerSec));
 dolog('Sectors per Cluster:'+inttostr(SecPerCl));
 dolog('Cluster size :'+inttostr(SecPerCl * BtPerSec));
-
+//
 hdevice:=thandle(-1);
 hDevice := CreateFile( pchar('\\.\'+copy(filename,1,2)), GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE,nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if GetPartitionInfo(hDevice ,info)=true then
@@ -171,11 +171,10 @@ hDevice := CreateFile( pchar('\\.\'+copy(filename,1,2)), GENERIC_READ, FILE_SHAR
    dolog('PartitionNumber: '+inttostr(info.PartitionNumber ));
    dolog('StartingOffset: '+inttostr(info.StartingOffset.QuadPart));
    end;
-//
 
 if FSName <>'NTFS' then
     begin
-    buffer:=getmem(512);
+    buffer:=allocmem(512);
     bytesread:=0;
     fillchar(bs,sizeof(bs),0);
     ret:=ReadFile (hdevice, buffer^, 512, bytesread, nil);
@@ -188,9 +187,9 @@ if FSName <>'NTFS' then
       end;
     freemem(buffer);
     end;
-
-//
 if hdevice>0 then closehandle(hdevice);
+//
+
 
 //
 try
