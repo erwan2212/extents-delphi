@@ -12,6 +12,17 @@ function GetVolumePathNamesForVolumeName(lpszVolumeName: LPCTSTR;lpszVolumePathN
 var
 i64:int64;
 
+Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
+const IOCTL_DISK_GET_PARTITION_INFO_EX = $0070048;
+var
+dwread:dword;
+begin
+result:=false;
+dwread:=0;
+if DeviceIoControl(hFile, IOCTL_DISK_GET_PARTITION_INFO_EX, nil, 0, @info, sizeof(PARTITION_INFORMATION_EX), dwread,nil)=true
+  then result:=true   ;
+end;
+
 procedure dolog(msg:string);
 begin
 try
@@ -119,10 +130,12 @@ ClCount,i,sector: ULONG;
 Name: array[0..2] of ansiChar;
 returned,SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
 lba:int64;
-FSName,VolName:array[0..255] of ansichar;
+FSName,VolName:array[0..max_path-1] of ansichar;
 FSSysFlags,maxCmp   : DWord;
 volumepathname:lptstr;
 vol:string;
+hDevice:thandle;
+info:PARTITION_INFORMATION_EX;
 begin
 //in case full path name is not provided and file is in current dir
 if (pos(':',filename)=0) and (pos('?',filename)=0) then filename:=GetCurrentDir +'\'+ filename;
@@ -157,6 +170,16 @@ dolog('***************************');
 dolog('Bytes Per Sector:'+inttostr(BtPerSec));
 dolog('Sectors per Cluster:'+inttostr(SecPerCl));
 dolog('Cluster size :'+inttostr(SecPerCl * BtPerSec));
+
+hdevice:=thandle(-1);
+hDevice := CreateFile( pchar('\\.\'+copy(filename,1,2)), GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE,nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  if GetPartitionInfo(hDevice ,info)=true then
+   begin
+   dolog('PartitionNumber: '+inttostr(info.PartitionNumber ));
+   dolog('StartingOffset: '+inttostr(info.StartingOffset.QuadPart));
+   end;
+if hdevice>0 then closehandle(hdevice);
+
 //
 try
 FileSize:=0;ClCount:=0;
@@ -179,7 +202,7 @@ if GetVolumeInformationA(PansiChar(copy(filename,1,3)), @VolName[0], MAX_PATH, n
                        maxCmp, FSSysFlags, @FSName[0], MAX_PATH)=true then
 begin
 lba:=0;
-dolog('Filesystem :'+string(strpas(@FSName[0])));
+try dolog('Filesystem :'+string(strpas(@FSName[0])));except end;
 //Send the first extent's LCN to translation to physical offset from the beginning of the disk
 //if FSName='NTFS' then lba:=TranslateLogicalToPhysical(lpSrcName,clusters[0] * (SecPerCl * BtPerSec));
 end;
@@ -200,15 +223,17 @@ end;
   sector:=0;lba:=0;
   for i:=low(extents_) to high(extents_)  do
   begin
-  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  //if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
+  if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,extents_[i].LCN.QuadPart * (SecPerCl * BtPerSec));
+  if FSName<>'NTFS' then lba:=extents_[i].LCN.QuadPart * (SecPerCl * BtPerSec) + info.StartingOffset.QuadPart;
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
   dolog('#:'+inttostr(i)+#9
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
     +'VCN:'+inttostr(extents_[i].NextVcn.QuadPart )+#9
     +'LCN:'+inttostr(extents_[i].LCN.QuadPart )+#9
     //+' Lba : 0x'+inttohex(lba div BtPerSec,8)
-    +'Lba:'+inttostr(lba div BtPerSec)+#9
-    +'Clusters:'+inttostr(extents_[i].sectors div SecPerCl));
+    +'Clusters:'+inttostr(extents_[i].sectors div SecPerCl)+#9
+    +'Lba:'+inttostr(lba div BtPerSec));
   end;
   end;
   //**********
@@ -224,7 +249,7 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
-  writeln('extents 1.4 by erwan2212@gmail.com');
+  writeln('extents 1.5 by erwan2212@gmail.com');
   if paramcount=0 then
     begin
     writeln('extents path_to_filename');

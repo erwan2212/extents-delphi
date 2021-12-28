@@ -79,7 +79,19 @@ function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; 
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
 function TranslatePhysicalToLogical(filename:string;PhysicalOffset_:LONGLONG):int64;
 
+//Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
+
 implementation
+
+Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
+var
+dwread:dword;
+begin
+result:=false;
+dwread:=0;
+if DeviceIoControl(hFile, IOCTL_DISK_GET_PARTITION_INFO_EX, nil, 0, @info, sizeof(PARTITION_INFORMATION_EX), dwread,nil)=true
+  then result:=true   ;
+end;
 
 function TranslatePhysicalToLogical(filename:string;PhysicalOffset_:LONGLONG):int64;
 var
@@ -119,6 +131,7 @@ begin
  CloseHandle(volumeHandle);
 end;
 
+//offset is in sector
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
 var
 logicalOffset:VOLUME_LOGICAL_OFFSET;
