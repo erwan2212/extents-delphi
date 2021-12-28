@@ -3,8 +3,7 @@ program extents;
 {$APPTYPE CONSOLE}
 
 uses
-  windows,SysUtils,math,
-  utils in '..\utils.pas';
+  windows,SysUtils,math,utils in '..\utils.pas' ;
 
 function GetVolumePathName(lpszFileName:LPCTSTR; lpszVolumePathName:LPTSTR; cchBufferLength:DWORD): BOOL; stdcall external Kernel32 name 'GetVolumePathNameA';
 function GetVolumePathNamesForVolumeName(lpszVolumeName: LPCTSTR;lpszVolumePathNames: LPTSTR;cchBufferLength: DWORD;lpcchReturnLength:PDWORD):BOOL; stdcall external Kernel32 name 'GetVolumePathNamesForVolumeNameA';
@@ -12,16 +11,6 @@ function GetVolumePathNamesForVolumeName(lpszVolumeName: LPCTSTR;lpszVolumePathN
 var
 i64:int64;
 
-Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
-const IOCTL_DISK_GET_PARTITION_INFO_EX = $0070048;
-var
-dwread:dword;
-begin
-result:=false;
-dwread:=0;
-if DeviceIoControl(hFile, IOCTL_DISK_GET_PARTITION_INFO_EX, nil, 0, @info, sizeof(PARTITION_INFORMATION_EX), dwread,nil)=true
-  then result:=true   ;
-end;
 
 procedure dolog(msg:string);
 begin
@@ -129,13 +118,17 @@ FileSize, ClusterSize:int64;
 ClCount,i,sector: ULONG;
 Name: array[0..2] of ansiChar;
 returned,SecPerCl, BtPerSec, FreeClusters, NumOfClusters: DWORD;
-lba:int64;
+lba,delta:int64;
 FSName,VolName:array[0..max_path-1] of ansichar;
 FSSysFlags,maxCmp   : DWord;
 volumepathname:lptstr;
 vol:string;
 hDevice:thandle;
 info:PARTITION_INFORMATION_EX;
+ret:boolean;
+buffer:pointer;
+bytesread:cardinal;
+bs:tboot_sequence;
 begin
 //in case full path name is not provided and file is in current dir
 if (pos(':',filename)=0) and (pos('?',filename)=0) then filename:=GetCurrentDir +'\'+ filename;
@@ -178,6 +171,25 @@ hDevice := CreateFile( pchar('\\.\'+copy(filename,1,2)), GENERIC_READ, FILE_SHAR
    dolog('PartitionNumber: '+inttostr(info.PartitionNumber ));
    dolog('StartingOffset: '+inttostr(info.StartingOffset.QuadPart));
    end;
+//
+
+if FSName <>'NTFS' then
+    begin
+    buffer:=getmem(512);
+    bytesread:=0;
+    fillchar(bs,sizeof(bs),0);
+    ret:=ReadFile (hdevice, buffer^, 512, bytesread, nil);
+    delta:=0;
+    if bytesread>0 then
+      begin
+      copymemory(@bs,buffer,512);
+      delta:=(bs.wSectorsReservedAtBegin*bs.wBytesPerSector)+(bs.NumberOfFATs *bs.BigSectorsPerFAT*bs.wBytesPerSector);
+      //writeln(delta);
+      end;
+    freemem(buffer);
+    end;
+
+//
 if hdevice>0 then closehandle(hdevice);
 
 //
@@ -185,9 +197,10 @@ try
 FileSize:=0;ClCount:=0;
 SetLength(Clusters ,0);
 SetLength(extents_ ,0);
+clcount:=0;
 Clusters := GetFileClusters(filename, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
 except
-on e:exception do dolog('GetFileClusters:'+e.Message );
+on e:exception do begin dolog('GetFileClusters:'+e.Message );exit;end;
 end;
 //
 if length(clusters)<=0 then
@@ -225,14 +238,14 @@ end;
   begin
   //if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,clusters[sector div 8] * (SecPerCl * BtPerSec));
   if FSName='NTFS' then lba:=TranslateLogicalToPhysical(filename,extents_[i].LCN.QuadPart * (SecPerCl * BtPerSec));
-  if FSName<>'NTFS' then lba:=extents_[i].LCN.QuadPart * (SecPerCl * BtPerSec) + info.StartingOffset.QuadPart;
+  if FSName<>'NTFS' then lba:=delta + (extents_[i].LCN.QuadPart * int64(SecPerCl * BtPerSec)) + int64(info.StartingOffset.QuadPart);
   sector:=sector+extents_[i].sectors ;//add the number of sectors for each extent - cluster = sectors div 8
   dolog('#:'+inttostr(i)+#9
     //+' VCN : 0x'+inttohex(extents_[i].NextVcn.lowPart ,4)+inttohex(extents_[i].NextVcn.highPart ,4)
     +'VCN:'+inttostr(extents_[i].NextVcn.QuadPart )+#9
     +'LCN:'+inttostr(extents_[i].LCN.QuadPart )+#9
     //+' Lba : 0x'+inttohex(lba div BtPerSec,8)
-    +'Clusters:'+inttostr(extents_[i].sectors div SecPerCl)+#9
+    +'Size:'+inttostr(extents_[i].sectors div SecPerCl)+#9
     +'Lba:'+inttostr(lba div BtPerSec));
   end;
   end;

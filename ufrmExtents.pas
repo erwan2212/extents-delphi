@@ -99,7 +99,7 @@ Name[0] := filename[1];
 try
 Clusters := GetFileClusters(filename, ClusterSize,BtPerSec, @ClCount, FileSize,extents_);
 except
-on e:exception do dolog(e.Message );
+on e:exception do begin dolog('GetFileClusters:'+e.Message );exit;end;
 end;
 //
   dolog('***************************');

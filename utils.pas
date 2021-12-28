@@ -10,6 +10,66 @@ const
   IOCTL_VOLUME_LOGICAL_TO_PHYSICAL = $00560020;
   IOCTL_VOLUME_PHYSICAL_TO_LOGICAL = $00560024;
   IOCTL_STORAGE_GET_DEVICE_NUMBER =  $002D1080;
+  IOCTL_DISK_GET_PARTITION_INFO_EX = $0070048;
+  NT_STATUS_SUCCESS =0;
+
+  {$ifndef fpc}
+  type
+  PPARTITION_INFORMATION_GPT = ^PARTITION_INFORMATION_GPT;
+  {$EXTERNALSYM PPARTITION_INFORMATION_GPT}
+  _PARTITION_INFORMATION_GPT = record
+    PartitionType: tGUID; // Partition type. See table 16-3.
+    PartitionId: tGUID; // Unique GUID for this partition.
+    Attributes: int64; // See table 16-4.
+    Name: array [0..35] of WCHAR; // Partition Name in Unicode.
+  end;
+  {$EXTERNALSYM _PARTITION_INFORMATION_GPT}
+  PARTITION_INFORMATION_GPT = _PARTITION_INFORMATION_GPT;
+  {$EXTERNALSYM PARTITION_INFORMATION_GPT}
+  TPartitionInformationGpt = PARTITION_INFORMATION_GPT;
+  PPartitionInformationGpt = PPARTITION_INFORMATION_GPT;
+  
+  PPARTITION_INFORMATION_MBR = ^PARTITION_INFORMATION_MBR;
+  {$EXTERNALSYM PPARTITION_INFORMATION_MBR}
+  _PARTITION_INFORMATION_MBR = record
+    PartitionType: BYTE;
+    BootIndicator: BOOLEAN;
+    RecognizedPartition: BOOLEAN;
+    HiddenSectors: DWORD;
+  end;
+  {$EXTERNALSYM _PARTITION_INFORMATION_MBR}
+  PARTITION_INFORMATION_MBR = _PARTITION_INFORMATION_MBR;
+  {$EXTERNALSYM PARTITION_INFORMATION_MBR}
+  TPartitionInformationMbr = PARTITION_INFORMATION_MBR;
+  PPartitionInformationMbr = PPARTITION_INFORMATION_MBR;
+  
+    _PARTITION_STYLE = (
+    PARTITION_STYLE_MBR,
+    PARTITION_STYLE_GPT,
+    PARTITION_STYLE_RAW);
+  {$EXTERNALSYM _PARTITION_STYLE}
+  PARTITION_STYLE = _PARTITION_STYLE;
+  {$EXTERNALSYM PARTITION_STYLE}
+  TPartitionStyle = PARTITION_STYLE;
+
+    PPARTITION_INFORMATION_EX = ^PARTITION_INFORMATION_EX;
+  {$EXTERNALSYM PPARTITION_INFORMATION_EX}
+  _PARTITION_INFORMATION_EX = record
+    PartitionStyle: PARTITION_STYLE;
+    StartingOffset: LARGE_INTEGER;
+    PartitionLength: LARGE_INTEGER;
+    PartitionNumber: DWORD;
+    RewritePartition: BOOLEAN;
+    case Integer of
+      0: (Mbr: PARTITION_INFORMATION_MBR);
+      1: (Gpt: PARTITION_INFORMATION_GPT);
+  end;
+  {$EXTERNALSYM _PARTITION_INFORMATION_EX}
+  PARTITION_INFORMATION_EX = _PARTITION_INFORMATION_EX;
+  {$EXTERNALSYM PARTITION_INFORMATION_EX}
+  TPartitionInformationEx = PARTITION_INFORMATION_EX;
+  PPartitionInformationEx = PPARTITION_INFORMATION_EX;
+  {$endif}
 
 type
   ULONGLONG = ULONG;
@@ -75,13 +135,44 @@ type
     PartitionNumber: DWORD;
   end;
 
+  TBOOT_SEQUENCE = packed record
+     _jmpcode : array[1..3] of Byte; //0
+        cOEMID: array[1..8] of ansiChar; //3
+        //BPB = bios parameter block (25 bytes)
+        wBytesPerSector: Word;       //11
+        bSectorsPerCluster: Byte;    //13
+        wSectorsReservedAtBegin: Word;  //14   reserved sectors
+      	NumberOfFATs:byte;     //16            numbers of fats
+       	RootEntries:word;     //17
+       	NumberOfSectors:word; //19
+        bMediaDescriptor: Byte; //21
+        SectorsPerFAT: Word;  //22
+        wSectorsPerTrack: Word;      //24  as in chS
+        wHeads: Word;                //26  as in cHs
+        HiddenSectors: DWord; //28  sectors before
+        BigNumberOfSectors: DWord;//32
+        //end of BPB / start of extended BPB (48 bytes)
+        BigSectorsPerFAT: DWord;//36          sectors per fat
+        TotalSectors: Int64; //40
+        MftStartLcn: Int64; //48 Logical Cluster Number
+        Mft2StartLcn: Int64;//56
+        ClustersPerFileRecord: DWord; //64
+        ClustersPerIndexBlock: DWord; //68
+        VolumeSerialNumber: Int64;    //72
+        checksum:dword; //80
+        //end of extended BPB
+        _loadercode: array[1..426] of Byte; //426
+        wSignature: Word;                   //2
+   end;
+
+
 function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:TExtents_): TClusters;
 function TranslateLogicalToPhysical(filename:string;LogicalOffset_:LONGLONG):int64;
 function TranslatePhysicalToLogical(filename:string;PhysicalOffset_:LONGLONG):int64;
-
-//Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
+Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
 
 implementation
+
 
 Function GetPartitionInfo(hfile:thandle;var info:PARTITION_INFORMATION_EX):boolean ;
 var
@@ -170,13 +261,16 @@ end;
 function GetFileClusters(lpFileName: string; ClusterSize: Int64;BtPerSec:dword; ClCount: PInt64; var FileSize: Int64;var extents_:textents_ ): TClusters;
 var
   hFile: THandle;
-  Bytes, Cls, CnCount, r,sectors: ULONG;
+  Bytes, sectors: ULONG;
+  Cls, CnCount, r:int64;
   Clusters: TClusters;
   lcn: LARGE_INTEGER;
   InBuf: STARTING_VCN_INPUT_BUFFER;
   OutBuf: PRETRIEVAL_POINTERS_BUFFER;
   x,errcode :longint;
+  ret:boolean;
 begin
+ //writeln('ok1');
   hFile := CreateFile(pchar(lpFileName), generic_read, FILE_SHARE_READ, nil, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
 
   // try again wit other flags
@@ -190,6 +284,7 @@ begin
   if (hFile <> INVALID_HANDLE_VALUE) then
   begin
     //FileSize := GetFileSize(hFile, nil);
+
     Int64Rec(FileSize).Lo := GetFileSize(hFile, @Int64Rec(FileSize).Hi);
 
     outbuf:=AllocMem(sizeof(RETRIEVAL_POINTERS_BUFFER));
@@ -197,56 +292,71 @@ begin
     bytes:=0;
 
     InBuf.StartingVcn.QuadPart := 0;
-
+    //writeln('ok2');
     //lets get the extents
     repeat
-    DeviceIoControl(hFile, FSCTL_GET_RETRIEVAL_POINTERS, @InBuf, SizeOf(InBuf), OutBuf, sizeof(RETRIEVAL_POINTERS_BUFFER), Bytes, nil);
+    ret:=DeviceIoControl(hFile, FSCTL_GET_RETRIEVAL_POINTERS, @InBuf, SizeOf(InBuf), OutBuf, sizeof(RETRIEVAL_POINTERS_BUFFER), Bytes, nil);
     errcode := GetLastError;
+    //writeln('DeviceIoControl:'+booltostr(ret));
+    //writeln('errcode:'+inttostr(errcode));
+    //writeln('OutBuf^.ExtentCount:'+inttostr(OutBuf^.ExtentCount));
+    if (ERROR<>nt_status_success) or (errcode<>ERROR_MORE_DATA) then break ;
               x := 0;
               while x < OutBuf^.ExtentCount do
                 begin
                   //inc(total);
                   inc(x);
+                  //writeln('ok3:'+inttostr(x));
                   setlength(extents_ ,length(extents_ )+1);
                   extents_ [high(extents_ )].StartingVcn:=OutBuf^.StartingVcn ;
                   extents_ [high(extents_ )].NextVcn :=OutBuf^.Extents[X-1].NextVCN;
                   extents_ [high(extents_ )].LCN :=OutBuf^.Extents[X-1].LCN;
+                  //writeln('LCN:'+inttostr(extents_ [high(extents_ )].LCN.QuadPart ));
                 end;
     InBuf.StartingVCN.QuadPart := OutBuf^.Extents[X-1].NextVCN.QuadPart;
     until errcode <> ERROR_MORE_DATA;
-
+    //writeln('length(extents_ ):'+inttostr(length(extents_ )));
+    //readln;
+    //writeln('ok4');
     FreeMem(OutBuf);
     CloseHandle(hFile);
-
+    //writeln('ok41');
     ClCount^ := (FileSize + ClusterSize - 1) div ClusterSize;
+    //writeln('clcount:'+inttostr(ClCount^));
     SetLength(Clusters, ClCount^);
       //dolog('ExtentCount:'+inttostr(OutBuf^.ExtentCount));
       //dolog('StartingVcn:'+inttohex(OutBuf^.StartingVcn.QuadPart ,8));
       Cls := 0;
       r := 0;
       //lets go thru extents
+      //writeln('ok5');
       while (r < length(extents_ )) do
       begin
+        //writeln('ok6:'+inttostr(r));
         //This value minus either StartingVcn (for the first Extents array member)
         //or the NextVcn of the previous member of the array (for all other Extents array members)
         //is the length, in clusters, of the current extent
         CnCount := ULONG(Extents_[r].NextVcn.QuadPart - Extents_[r].StartingVcn.QuadPart  );
-
+        //writeln('CnCount:'+inttostr(CnCount));
+        //readln;
         Lcn.QuadPart:=extents_ [r].lcn.QuadPart;
         sectors:=0;
         //lets populate clusters
         while (CnCount > 0) do
         begin
-
+          //writeln('ok6.1:'+inttostr(cls));
           Clusters[Cls] := lcn.QuadPart;
           Dec(CnCount);
-          Inc(Cls);inc(sectors);
+          Inc(Cls);
+          inc(sectors);
           Inc(Lcn.QuadPart);
         end;//while
+        //writeln('ok7');
         Extents_[r].sectors :=sectors*ClusterSize div BtPerSec;
         Inc(r);
-      end;//while
 
+      end;//while
+  //writeln('ok99');
   end else raise exception.Create('invalid handle, '+inttostr(getlasterror));
   Result := Clusters;
 end;
